@@ -1,7 +1,7 @@
 import mlflow
 
 class Wrapper(mlflow.pyfunc.PythonModel):
-	def __init__(self):
+	def __init__(self, config):
 		pass
 	def load_context(self, context):
 		pass
