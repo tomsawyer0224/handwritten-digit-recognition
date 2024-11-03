@@ -1,13 +1,16 @@
 import mlflow
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Dict, Any
 from get_model import get_model
 
+from steps.data_ingestion.processor import Processor
+
 class Classifier(mlflow.pyfunc.PythonModel):
-	def __init__(self, model_config, preprocessor):
-		self.model = get_model(model_config)
+	def __init__(self, config: Dict[str, Any], preprocessor: Processor) -> None:
+		self.model = get_model(config)
 		self.preprocessor = preprocessor
+		self.library = config["library"]
 	def fit(
 			self,
 			data: Union[np.ndarray, pd.DataFrame],
