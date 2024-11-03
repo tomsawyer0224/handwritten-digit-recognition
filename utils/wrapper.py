@@ -23,5 +23,7 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	def load_context(self, context):
 		pass
 	def predict(self, context, model_input, params=None):
-		pass
+		X = self.preprocessor(model_input)
+		y_pred = self.model(X)
+		return y_pred
 		

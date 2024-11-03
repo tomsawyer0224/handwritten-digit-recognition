@@ -20,6 +20,7 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 
+
 def get_model(config):
     """
     gets model from librares
@@ -28,39 +29,39 @@ def get_model(config):
     return:
         classifier model
     """
-    classifier_class = eval(config["classifier_class"])
+    model_class = eval(config["model_class"])
 
-    classifier = classifier_class(**config["classifier_params"])
-    return classifier
+    model = model_class(**config["model_params"])
+    return model
 
 if __name__=="__main__":
     sklearn_config = dict(
-        classifier_class = "RandomForestClassifier",
-        classifier_params = dict(
+        model_class = "RandomForestClassifier",
+        model_params = dict(
             n_estimators = 50,
             max_depth = 10
         )
     )
     print(get_model(sklearn_config))
     xgboost_config = dict(
-        classifier_class = "XGBClassifier",
-        classifier_params = dict(
+        model_class = "XGBClassifier",
+        model_params = dict(
             tree_method="hist",
             early_stopping_rounds=3
         )
     )
     print(get_model(xgboost_config))
     lightgbm_config = dict(
-        classifier_class = "LGBMClassifier",
-        classifier_params = dict(
+        model_class = "LGBMClassifier",
+        model_params = dict(
             boosting_type="gbdt",
             max_depth=3
         )
     )
     print(get_model(lightgbm_config))
     catboost_config = dict(
-        classifier_class = "CatBoostClassifier",
-        classifier_params = dict(
+        model_class = "CatBoostClassifier",
+        model_params = dict(
             iterations=500,
             depth=8
         )
