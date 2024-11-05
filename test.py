@@ -1,6 +1,7 @@
 import tempfile
 import os
 import mlflow
+from mlflow import MlflowClient
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 import joblib
@@ -25,7 +26,8 @@ tmp_model_path = os.path.join(tmp_dir.name, "fitted_model.joblib")
 joblib.dump(model, tmp_model_path)
 
 #experiment_id = get_or_create_experiment("Test PythonModel")
-experiment_id = get_or_create_experiment("Test Nested Run")
+client = MlflowClient()
+experiment_id = get_or_create_experiment("Test Nested Run", client)
 artifacts = {"preprocessor": tmp_prep_path, "model": tmp_model_path}
 
 class Wrapper(mlflow.pyfunc.PythonModel):
@@ -39,6 +41,7 @@ class Wrapper(mlflow.pyfunc.PythonModel):
         X = self.preprocessor.transform(model_input)
         pred = self.model.predict(X)
         return pred
+
 run_name = get_next_run_name(experiment_id=experiment_id)
 with mlflow.start_run(
         experiment_id=experiment_id,

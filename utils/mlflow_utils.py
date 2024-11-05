@@ -1,6 +1,8 @@
 import mlflow
+from mlflow import MlflowClient
 
-def get_or_create_experiment(experiment_name: str) -> str:
+
+def get_or_create_experiment(experiment_name: str, client: MlflowClient = None) -> str:
     """
     Retrieve the ID of an existing MLflow experiment or create a new one if it doesn't exist.
 
@@ -9,17 +11,21 @@ def get_or_create_experiment(experiment_name: str) -> str:
     with the provided name and returns its ID.
 
     Parameters:
-    - experiment_name (str): Name of the MLflow experiment.
+        experiment_name (str): Name of the MLflow experiment.
 
     Returns:
-    - str: ID of the existing or newly created MLflow experiment.
+        ID of the existing or newly created MLflow experiment.
     """
-
-    if experiment := mlflow.get_experiment_by_name(experiment_name):
-        return experiment.experiment_id
+    if client is not None:
+        if experiment := client.get_experiment_by_name(experiment_name):
+            return experiment.experiment_id
+        else:
+            return client.create_experiment(experiment_name)
     else:
-        return mlflow.create_experiment(experiment_name)
-
+        if experiment := mlflow.get_experiment_by_name(experiment_name):
+            return experiment.experiment_id
+        else:
+            return mlflow.create_experiment(experiment_name)
 def get_next_run_name(experiment_id: str, prefix: str = "version") -> str:
     """
     create a new run name of a specific experiment (e.g version_0, version_1)

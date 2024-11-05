@@ -20,6 +20,8 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 
+import optuna
+
 
 def get_model(config):
     """
