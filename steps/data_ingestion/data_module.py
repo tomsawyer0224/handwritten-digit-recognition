@@ -1,9 +1,9 @@
 import logging
 from sklearn.utils import Bunch
 
-from data_loader import load_dataset
-from data_splitter import split_dataset
-from processor import Processor
+from .data_loader import load_dataset
+from .data_splitter import split_dataset
+from .processor import Processor
 
 logger = logging.getLogger(__name__)
 
