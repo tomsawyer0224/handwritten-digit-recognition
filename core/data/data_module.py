@@ -14,6 +14,8 @@ class Digit_Data_Module:
     """
     def __init__(self) -> None:
         raw_dataset = load_dataset()
+        #logger.info(f"raw_dataset['data'] =\n{raw_dataset['data']}")
+        #logger.info(f"raw_dataset['data'].describe():\n{raw_dataset['data'].describe()}")
         self.datasets = split_dataset(raw_dataset)
         self.preprocessor = Processor()
     def get_training_dataset(self) -> Bunch:
