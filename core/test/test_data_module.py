@@ -28,24 +28,27 @@ class Test_Data_Module(unittest.TestCase):
         else:
             raise "data should be numpy array or pandas dataframe"
         print(f"data range: [{min_val}, {max_val}]")
+        print("+++"*10)
         print(f"target type: {type(target)}")
+        target_array = np.array(target)
+        print(f"target range: [{target_array.min()}, {target_array.max()}]")
 
     def test_methods(self):
         data_module = Digit_Data_Module()
+        print("---"*30)
         print("***test_get_training_dataset***")
         training_dataset = data_module.get_training_dataset()
         train_dataset = training_dataset["train_dataset"]
         val_dataset = training_dataset["val_dataset"]
-        print("train_dataset")
+        print("\n>>> train_dataset:")
         self.print_dataset_info(train_dataset)
-        print("++"*30)
-        print("val_dataset")
+        print("\n>>> val_dataset:")
         self.print_dataset_info(val_dataset)
         print("---"*30)
     
         print("***test_get_inference_dataset***")
         test_dataset = data_module.get_inference_dataset()
-        print("test_dataset")
+        print("\n>>> test_dataset:")
         self.print_dataset_info(test_dataset)
         print("---"*30)
     
