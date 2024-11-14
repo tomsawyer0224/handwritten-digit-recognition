@@ -1,8 +1,11 @@
 import sys
 if "." not in sys.path: sys.path.append(".")
+import numpy as np
+import pandas as pd
 import unittest
 import logging
 from core import Processor, Digit_Data_Module
+
 
 logging.basicConfig(
         format="{asctime}::{levelname}::{name}::{message}",
@@ -15,12 +18,18 @@ class Test_Data_Module(unittest.TestCase):
     def print_dataset_info(self, dataset):
         data = dataset["data"]
         target = dataset["target"]
-        print(f"data value:\n{data}")
         print(f"data type: {type(data)}")
-        print(f"data range: [{data.min()}, {data.max()}]")
-        print(f"target value:\n{target}")
+        if isinstance(data, np.ndarray):
+            min_val = data.min()
+            max_val = data.max()
+        elif isinstance(data, (pd.DataFrame, pd.Series)):
+            min_val = data.min().min()
+            max_val = data.max().max()
+        else:
+            raise "data should be numpy array or pandas dataframe"
+        print(f"data range: [{min_val}, {max_val}]")
         print(f"target type: {type(target)}")
-        #print(f"target range: [{target.min()}, {target.max()}]")
+
     def test_methods(self):
         data_module = Digit_Data_Module()
         print("***test_get_training_dataset***")
