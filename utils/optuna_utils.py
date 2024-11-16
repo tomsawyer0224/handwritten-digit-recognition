@@ -5,7 +5,7 @@ import optuna
 from mlflow import MlflowClient
 
 #from steps.data_ingestion.data_module import Digit_Data_Module
-from steps.data_ingestion import Digit_Data_Module
+from core import Digit_Data_Module
 from get_model import get_model
 from wrapper import Classifier
 from mlflow_utils import get_or_create_experiment
@@ -44,35 +44,34 @@ class Objective:
         config = {k: v for k, v in self.config.items() if k != "model_params"}
         config["model_params"] = {}
         model_class = config["model_class"]
-        #print("###"*10)
-        #print(self.config)
+
         for name, value in self.config["model_params"].items():
-            #model_params = {}
-            #print("###"*20)
-            #print(value)
-            #print(value["param_type"])
-            if value["param_type"] == "float":
-                low, high = value["param_range"]
-                config["model_params"][name] = trial.suggest_float(
-                    name=f"{model_class}_{name}",
-                    low=low,
-                    high=high
-                )
-            elif value["param_type"] == "int":
-                low, high = value["param_range"]
-                config["model_params"][name] = trial.suggest_int(
-                    name=f"{model_class}_{name}",
-                    low=low,
-                    high=high
-                )
-            elif value["param_type"] == "categorical":
-                config["model_params"][name] = trial.suggest_categorical(
-                    name=f"{model_class}_{name}",
-                    choices=value["param_range"]
-                )
+            if isinstance(value, dict):
+                if value["param_type"] == "float":
+                    low, high = value["param_range"]
+                    config["model_params"][name] = trial.suggest_float(
+                        name=f"{model_class}_{name}",
+                        low=low,
+                        high=high
+                    )
+                elif value["param_type"] == "int":
+                    low, high = value["param_range"]
+                    config["model_params"][name] = trial.suggest_int(
+                        name=f"{model_class}_{name}",
+                        low=low,
+                        high=high
+                    )
+                elif value["param_type"] == "categorical":
+                    config["model_params"][name] = trial.suggest_categorical(
+                        name=f"{model_class}_{name}",
+                        choices=value["param_range"]
+                    )
+                else:
+                    raise "param_type should be in ['float', 'int', 'categorical']"
             else:
-                raise "param_type should be in ['float', 'int', 'categorical']"
-            
+                config["model_params"][name] = value
+            if config["model_params"].get("random_state") is None:
+                config["model_params"]["random_state"] = 42
             self.client.log_param(
                 run_id=trial_run.info.run_id, 
                 key=name, 

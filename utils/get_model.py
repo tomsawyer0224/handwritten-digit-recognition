@@ -23,7 +23,7 @@ from catboost import CatBoostClassifier
 import optuna
 
 
-def get_model(config):
+def get_model(config, default = False):
     """
     gets model from librares
     args:
@@ -32,8 +32,12 @@ def get_model(config):
         classifier model
     """
     model_class = eval(config["model_class"])
-
-    model = model_class(**config["model_params"])
+    if config["model_params"].get("random_state") is None:
+        config["model_params"]["random_state"] = 42
+    if default:
+        model = model_class(random_state = config["random_state"])
+    else:
+        model = model_class(**config["model_params"])
     return model
 
 if __name__=="__main__":
