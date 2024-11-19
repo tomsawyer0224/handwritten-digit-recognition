@@ -22,54 +22,29 @@ from catboost import CatBoostClassifier
 
 import optuna
 
+from typing import Dict, Any
 
-def get_model(config, default = False):
+def get_model(config: Dict[str, Any], return_default_model: bool = False):
     """
     gets model from librares
     args:
         config: dict-like configuration
+                e.g config = {
+                    model_class = 'RandomForestClassifier',
+                    model_params = {
+                        n_estimators = 50,
+                        max_depth = 10
+                    }
+                }
+        return_default_model: return the default model (ignores the 'config' param)
     return:
         classifier model
     """
     model_class = eval(config["model_class"])
     if config["model_params"].get("random_state") is None:
         config["model_params"]["random_state"] = 42
-    if default:
-        model = model_class(random_state = config["random_state"])
+    if return_default_model:
+        model = model_class(random_state = config["model_params"]["random_state"])
     else:
         model = model_class(**config["model_params"])
     return model
-
-if __name__=="__main__":
-    sklearn_config = dict(
-        model_class = "RandomForestClassifier",
-        model_params = dict(
-            n_estimators = 50,
-            max_depth = 10
-        )
-    )
-    print(get_model(sklearn_config))
-    xgboost_config = dict(
-        model_class = "XGBClassifier",
-        model_params = dict(
-            tree_method="hist",
-            early_stopping_rounds=3
-        )
-    )
-    print(get_model(xgboost_config))
-    lightgbm_config = dict(
-        model_class = "LGBMClassifier",
-        model_params = dict(
-            boosting_type="gbdt",
-            max_depth=3
-        )
-    )
-    print(get_model(lightgbm_config))
-    catboost_config = dict(
-        model_class = "CatBoostClassifier",
-        model_params = dict(
-            iterations=500,
-            depth=8
-        )
-    )
-    print(get_model(catboost_config))

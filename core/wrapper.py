@@ -2,7 +2,7 @@ import mlflow
 import numpy as np
 import pandas as pd
 from typing import Union, Dict, Any
-from get_model import get_model
+from utils import get_model
 
 from core import Processor
 
