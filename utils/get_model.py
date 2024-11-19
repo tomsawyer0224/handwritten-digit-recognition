@@ -30,10 +30,10 @@ def get_model(config: Dict[str, Any], return_default_model: bool = False):
     args:
         config: dict-like configuration
                 e.g config = {
-                    model_class = 'RandomForestClassifier',
-                    model_params = {
-                        n_estimators = 50,
-                        max_depth = 10
+                    'model_class': 'RandomForestClassifier',
+                    'model_params': {
+                        'n_estimators': 50,
+                        'max_depth': 10
                     }
                 }
         return_default_model: return the default model (ignores the 'config' param)
