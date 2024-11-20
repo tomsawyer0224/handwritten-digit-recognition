@@ -6,7 +6,7 @@ from mlflow import MlflowClient
 
 #from steps.data_ingestion.data_module import Digit_Data_Module
 from core import Digit_Data_Module
-from get_model import get_model
+from utils.create_model import create_model
 from wrapper import Classifier
 from mlflow_utils import get_or_create_experiment
 config_SVM = dict(

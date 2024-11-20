@@ -24,9 +24,9 @@ import optuna
 
 from typing import Dict, Any
 
-def get_model(config: Dict[str, Any], return_default_model: bool = False):
+def create_model(config: Dict[str, Any], return_default_model: bool = False):
     """
-    gets model from librares
+    creates model from config
     args:
         config: dict-like configuration
                 e.g config = {

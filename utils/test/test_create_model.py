@@ -2,10 +2,10 @@ import sys
 if "." not in sys.path: sys.path.append(".")
 import unittest
 
-from utils import get_model
+from utils import create_model
 
-class Test_get_model(unittest.TestCase):
-    def test_get_model(self):
+class Test_create_model(unittest.TestCase):
+    def test_create_model(self):
         sklearn_config = dict(
             model_class = "RandomForestClassifier",
             model_params = dict(
@@ -13,7 +13,7 @@ class Test_get_model(unittest.TestCase):
                 max_depth = 10
             )
         )
-        print(get_model(sklearn_config, return_default_model=True))
+        print(create_model(sklearn_config, return_default_model=False))
 
         xgboost_config = dict(
             model_class = "XGBClassifier",
@@ -22,7 +22,7 @@ class Test_get_model(unittest.TestCase):
                 early_stopping_rounds=3
             )
         )
-        print(get_model(xgboost_config, return_default_model=True))
+        print(create_model(xgboost_config, return_default_model=True))
 
         lightgbm_config = dict(
             model_class = "LGBMClassifier",
@@ -31,7 +31,7 @@ class Test_get_model(unittest.TestCase):
                 max_depth=3
             )
         )
-        print(get_model(lightgbm_config, return_default_model=True))
+        print(create_model(lightgbm_config, return_default_model=True))
 
         catboost_config = dict(
             model_class = "CatBoostClassifier",
@@ -40,7 +40,7 @@ class Test_get_model(unittest.TestCase):
                 depth=8
             )
         )
-        print(get_model(catboost_config, return_default_model=True))
+        print(create_model(catboost_config, return_default_model=True))
 
 if __name__ == "__main__":
     unittest.main()
