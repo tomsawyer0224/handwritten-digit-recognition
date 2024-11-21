@@ -21,6 +21,11 @@ class Tuner:
         self.data_module = data_module
         self.mlflow_client = mlflow_client
         self.experiment_id = experiment_id
+        parent_run_name = self.model_config["model_class"]
+        self.parent_run = self.mlflow_client.create_run(
+            experiment_id=self.experiment_id,
+            run_name=parent_run_name
+        )
     def get_objective(self, parent_run_id):
         child_run_name = generate_next_run_name(
             mlflow_client=self.mlflow_client,
@@ -35,10 +40,10 @@ class Tuner:
             run_name = child_run_name
         )
         def objective(trial: optuna.trial.Trial) -> Any:
-            config = {k: v for k, v in self.config.items() if k != "model_params"}
+            config = {k: v for k, v in self.model_config.items() if k != "model_params"}
             config["model_params"] = {}
             model_class = config["model_class"]
-            for name, value in self.config["model_params"].items():
+            for name, value in self.model_config["model_params"].items():
                 if isinstance(value, dict):
                     if value["param_type"] == "float":
                         low, high = value["param_range"]
@@ -85,6 +90,25 @@ class Tuner:
             
             return acc
         return objective
+    def tune(self):
+        parent_run_id = self.parent_run.info.run_id
+        objective = self.get_objective(parent_run_id)
+        study = optuna.create_study(direction="maximize")
+        study.optimize(objective, **self.tuning_config)
 
+        # best model
+        best_params = study.best_params
+        for k, v in best_params.items():
+            self.mlflow_client.log_param(
+                run_id=parent_run_id,
+                key=k.split("_")[-1],
+                value=v
+            )
+        best_value = study.best_value
+        self.mlflow_client.log_metric(
+            run_id=parent_run_id,
+            key="accuracy",
+            value=best_value
+        )
 
         

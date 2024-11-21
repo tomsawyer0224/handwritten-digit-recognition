@@ -1,5 +1,5 @@
 from mlflow import MlflowClient
-
+from mlflow.entities import Run
 def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
     """
     gets an existing experiment or creates a new experiment
@@ -13,14 +13,18 @@ def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
         return experiment.experiment_id
     else:
         return client.create_experiment(experiment_name)
-    
+def get_or_create_run(experiment_id: str, client: MlflowClient) -> Run:
+    pass
 def generate_next_run_name(
         mlflow_client: MlflowClient,
         experiment_id: str,
         prefix: str = "version"
     ) -> str:
+    """
+    generates a child run's name
+    """
     runs = mlflow_client.search_runs(experiment_ids=[experiment_id])
-    run_names = [run.info.run_name for run in runs]
+    run_names = [run.info.run_name for run in runs  if prefix in run.info.run_name]
     if run_names:
         newest_run_ver = int(run_names[0].split("_")[-1])
     else:

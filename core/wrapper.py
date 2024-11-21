@@ -2,15 +2,15 @@ import mlflow
 import numpy as np
 import pandas as pd
 from typing import Union, Dict, Any
-from utils import get_model
+from utils import create_model
 
 from core import Processor
 
 class Classifier(mlflow.pyfunc.PythonModel):
 	def __init__(self, config: Dict[str, Any], preprocessor: Processor) -> None:
-		self.model = get_model(config)
+		self.model = create_model(config)
 		self.preprocessor = preprocessor
-		self.library = config["library"]
+		self.library = config.get("library")
 	def fit(
 			self,
 			data: Union[np.ndarray, pd.DataFrame],
