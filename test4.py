@@ -23,7 +23,7 @@ def get_objective(parent_run_id):
     return objective
 
 client = MlflowClient()
-experiment_name = "min_x_sq"
+experiment_name = "min_x_squared"
 try:
     experiment = client.create_experiment(experiment_name)
 except:
@@ -33,7 +33,7 @@ study_run = client.create_run(experiment_id=experiment)
 study_run_id = study_run.info.run_id
 
 study = optuna.create_study(direction="minimize")
-study.optimize(get_objective(study_run_id), n_trials=50, n_jobs=2)
+study.optimize(get_objective(study_run_id), n_trials=10, n_jobs=2)
 
 client.log_param(study_run_id, "best_x", study.best_trial.params["x"])
 client.log_metric(study_run_id, "best_xsq", study.best_value)

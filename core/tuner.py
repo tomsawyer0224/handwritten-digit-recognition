@@ -18,17 +18,23 @@ class Tuner:
         ) -> None:
         self.model_config = model_config
         self.tuning_config = tuning_config
-        self.data_module = data_module
+        #self.data_module = data_module
+        self.datasets = data_module.get_training_dataset()
+        self.preprocessor = data_module.get_preprocessor()
         self.mlflow_client = mlflow_client
         self.experiment_id = experiment_id
-        parent_run_name = self.model_config["model_class"]
+        parent_run_name = generate_next_run_name(
+            client=self.mlflow_client,
+            experiment_id=self.experiment_id,
+            prefix=self.model_config["model_class"] + "_config"
+        )
         self.parent_run = self.mlflow_client.create_run(
             experiment_id=self.experiment_id,
             run_name=parent_run_name
         )
     def get_objective(self, parent_run_id):
         child_run_name = generate_next_run_name(
-            mlflow_client=self.mlflow_client,
+            client=self.mlflow_client,
             experiment_id=self.experiment_id,
             prefix = self.model_config["model_class"] + "_param_set"
         )
@@ -75,14 +81,14 @@ class Tuner:
                     key=name, 
                     value=config["model_params"][name]
                 )
-            dataset = self.data_module.get_training_dataset()
-            train_dataset = dataset["train_dataset"]
-            val_dataset = dataset["val_dataset"]
-            preprocessor = self.data_module.get_preprocessor()
-            clf = Classifier(config=config, preprocessor=preprocessor)
+            #dataset = self.data_module.get_training_dataset()
+            train_dataset = self.datasets["train_dataset"]
+            val_dataset = self.datasets["val_dataset"]
+            #preprocessor = self.data_module.get_preprocessor()
+            clf = Classifier(config=config, preprocessor=self.preprocessor)
             clf.fit(train_dataset["data"], train_dataset["target"])
             acc = clf.score(val_dataset["data"], val_dataset["target"])
-            self.client.log_metric(
+            self.mlflow_client.log_metric(
                 run_id=child_run.info.run_id,
                 key="accuracy",
                 value=acc

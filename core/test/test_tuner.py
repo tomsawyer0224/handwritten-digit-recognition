@@ -19,6 +19,10 @@ sklearn_config = dict(
             model_class = "RandomForestClassifier",
             model_params = dict(
                 n_estimators = 50,
+                criterion = dict(
+                    param_type = "categorical",
+                    param_range = ["gini", "entropy", "log_loss"]
+                ),
                 max_depth = 10
             )
         )
@@ -48,7 +52,7 @@ catboost_config = dict(
         )
 
 tuning_config = dict(
-    n_trials = 3,
+    n_trials = 5,
     n_jobs = -1
 )
 
