@@ -55,6 +55,7 @@ class Tuner:
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_float(
                             name=f"{model_class}_{name}",
+                            #name = f"{child_run_name}-name",
                             low=low,
                             high=high
                         )
@@ -62,12 +63,14 @@ class Tuner:
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_int(
                             name=f"{model_class}_{name}",
+                            #name = f"{child_run_name}-name",
                             low=low,
                             high=high
                         )
                     elif value["param_type"] == "categorical":
                         config["model_params"][name] = trial.suggest_categorical(
                             name=f"{model_class}_{name}",
+                            #name = f"{child_run_name}-name",
                             choices=value["param_range"]
                         )
                     else:
