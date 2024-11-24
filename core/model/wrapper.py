@@ -4,10 +4,10 @@ import pandas as pd
 from typing import Union, Dict, Any
 from utils import create_model
 
-from core import Processor
+from core import Preprocessor
 
 class Classifier(mlflow.pyfunc.PythonModel):
-	def __init__(self, config: Dict[str, Any], preprocessor: Processor) -> None:
+	def __init__(self, config: Dict[str, Any], preprocessor: Preprocessor) -> None:
 		self.model = create_model(config)
 		self.preprocessor = preprocessor
 		self.library = config.get("library")

@@ -3,7 +3,7 @@ from sklearn.utils import Bunch
 
 from .data_loader import load_dataset
 from .data_splitter import split_dataset
-from core import Processor
+from core import Preprocessor
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class Digit_Data_Module:
     def __init__(self) -> None:
         raw_dataset = load_dataset()
         self.datasets = split_dataset(raw_dataset)
-        self.preprocessor = Processor()
+        self.preprocessor = Preprocessor()
     def get_training_dataset(self) -> Bunch:
         # train_dataset
         train_data = self.datasets["train_dataset"]["data"]

@@ -10,6 +10,7 @@ from utils import generate_next_run_name
 
 logger = logging.getLogger(__name__)
 
+optuna.logging.set_verbosity(optuna.logging.ERROR)
 class Tuner:
     def __init__(
             self,
@@ -37,7 +38,7 @@ class Tuner:
             run_name=parent_run_name
         )
         #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
-        
+
     def get_objective(self, parent_run_id):
         
         def objective(trial: optuna.trial.Trial) -> Any:
@@ -60,7 +61,6 @@ class Tuner:
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_float(
                             name=f"{model_class}_{name}",
-                            #name = f"{child_run_name}-name",
                             low=low,
                             high=high
                         )
@@ -68,14 +68,12 @@ class Tuner:
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_int(
                             name=f"{model_class}_{name}",
-                            #name = f"{child_run_name}-name",
                             low=low,
                             high=high
                         )
                     elif value["param_type"] == "categorical":
                         config["model_params"][name] = trial.suggest_categorical(
                             name=f"{model_class}_{name}",
-                            #name = f"{child_run_name}-name",
                             choices=value["param_range"]
                         )
                     else:
@@ -113,10 +111,9 @@ class Tuner:
         return objective
     
     def tune(self):
+        logger.info(f"start hyper prameters tuning on {self.model_config["model_class"]}")
         parent_run_id = self.parent_run.info.run_id
         objective = self.get_objective(parent_run_id)
-        
-        #study.optimize(self.objective, **self.tuning_config)
         study = optuna.create_study(direction="maximize")
         study.optimize(objective, **self.tuning_config)
         # best model

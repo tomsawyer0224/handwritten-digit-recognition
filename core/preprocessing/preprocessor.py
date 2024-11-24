@@ -2,9 +2,9 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
 
-class Processor:
+class Preprocessor:
     """
-    a class for preprocessing purposes
+    a class for preprocessing data
     """
     def __init__(self) -> None:
         self.scaler = MinMaxScaler()

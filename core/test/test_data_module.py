@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import unittest
 import logging
-from core import Processor, Digit_Data_Module
+from core import Digit_Data_Module
 
 
 logging.basicConfig(
