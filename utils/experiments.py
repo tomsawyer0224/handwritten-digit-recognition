@@ -1,5 +1,8 @@
 from mlflow import MlflowClient
 from mlflow.entities import Run
+import logging
+
+logger = logging.getLogger(__name__)
 def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
     """
     gets an existing experiment or creates a new experiment
@@ -31,7 +34,8 @@ def generate_next_run_name(
         filter_string=f"attributes.run_name LIKE '{prefix}%'"
     )
     run_names = [run.info.run_name for run in runs]
-    if run_names:
+    #logger.info(f"{run_names=}")
+    if len(run_names) > 0:
         newest_run_ver = int(run_names[0].split("_")[-1])
     else:
         newest_run_ver = 0

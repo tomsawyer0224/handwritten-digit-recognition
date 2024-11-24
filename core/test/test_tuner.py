@@ -18,12 +18,23 @@ logger = logging.getLogger(__name__)
 sklearn_config = dict(
             model_class = "RandomForestClassifier",
             model_params = dict(
-                n_estimators = 50,
+                n_estimators = dict(
+                    param_type = "int",
+                    param_range = [50, 100]
+                ),
                 criterion = dict(
                     param_type = "categorical",
                     param_range = ["gini", "entropy", "log_loss"]
                 ),
-                max_depth = 10
+                max_depth = dict(
+                    param_type = "int",
+                    param_range = [2, 10],
+                ),
+                ccp_alpha = dict(
+                    param_type = "float",
+                    param_range = [0.0, 0.5]
+                ),
+                max_features = "sqrt"
             )
         )
 
@@ -52,8 +63,8 @@ catboost_config = dict(
         )
 
 tuning_config = dict(
-    n_trials = 5,
-    n_jobs = -1
+    n_trials = 4,
+    n_jobs = 2
 )
 
 logger.info("prepare digit data module")

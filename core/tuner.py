@@ -1,11 +1,14 @@
 import optuna
 from mlflow import MlflowClient
 from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
-from typing import Dict, Any
+from typing import Dict, Any, Callable
+from sklearn.utils import Bunch
+import logging
 
-from core import Digit_Data_Module
+from core import Digit_Data_Module, Classifier
 from utils import generate_next_run_name
-from core import Classifier
+
+logger = logging.getLogger(__name__)
 
 class Tuner:
     def __init__(
@@ -23,29 +26,31 @@ class Tuner:
         self.preprocessor = data_module.get_preprocessor()
         self.mlflow_client = mlflow_client
         self.experiment_id = experiment_id
+        #logger.info("generate a new parent_run_name")
         parent_run_name = generate_next_run_name(
             client=self.mlflow_client,
             experiment_id=self.experiment_id,
-            prefix=self.model_config["model_class"] + "_config"
+            prefix=self.model_config["model_class"] + "_test"
         )
         self.parent_run = self.mlflow_client.create_run(
             experiment_id=self.experiment_id,
             run_name=parent_run_name
         )
+        #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
+        
     def get_objective(self, parent_run_id):
-        child_run_name = generate_next_run_name(
-            client=self.mlflow_client,
-            experiment_id=self.experiment_id,
-            prefix = self.model_config["model_class"] + "_param_set"
-        )
-        child_run = self.mlflow_client.create_run(
-            experiment_id=self.experiment_id,
-            tags={
-                MLFLOW_PARENT_RUN_ID: parent_run_id
-            },
-            run_name = child_run_name
-        )
+        
         def objective(trial: optuna.trial.Trial) -> Any:
+            #logger.info("create a new child run")
+            child_run_name = f"{self.model_config["model_class"]}_param_set_{trial.number}"
+            child_run = self.mlflow_client.create_run(
+                    experiment_id=self.experiment_id,
+                    tags={
+                        MLFLOW_PARENT_RUN_ID: parent_run_id
+                    },
+                    run_name = child_run_name
+                )
+            #logger.info(f"created a new child run with child_run_name: {child_run_name}")
             config = {k: v for k, v in self.model_config.items() if k != "model_params"}
             config["model_params"] = {}
             model_class = config["model_class"]
@@ -79,11 +84,18 @@ class Tuner:
                     config["model_params"][name] = value
                 if config["model_params"].get("random_state") is None:
                     config["model_params"]["random_state"] = 42
+                '''
                 self.mlflow_client.log_param(
                     run_id=child_run.info.run_id, 
                     key=name, 
                     value=config["model_params"][name]
                 )
+                '''
+            self.mlflow_client.log_param(
+                run_id=child_run.info.run_id, 
+                key="config", 
+                value=config
+            )   
             #dataset = self.data_module.get_training_dataset()
             train_dataset = self.datasets["train_dataset"]
             val_dataset = self.datasets["val_dataset"]
@@ -99,12 +111,14 @@ class Tuner:
             
             return acc
         return objective
+    
     def tune(self):
         parent_run_id = self.parent_run.info.run_id
         objective = self.get_objective(parent_run_id)
+        
+        #study.optimize(self.objective, **self.tuning_config)
         study = optuna.create_study(direction="maximize")
         study.optimize(objective, **self.tuning_config)
-
         # best model
         best_params = study.best_params
         for k, v in best_params.items():
