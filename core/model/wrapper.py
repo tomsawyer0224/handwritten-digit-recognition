@@ -10,7 +10,7 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	def __init__(self, config: Dict[str, Any], preprocessor: Preprocessor) -> None:
 		self.model = create_model(config)
 		self.preprocessor = preprocessor
-		self.library = config.get("library")
+		#self.library = config.get("library")
 	def fit(
 			self,
 			data: Union[np.ndarray, pd.DataFrame],
@@ -21,7 +21,7 @@ class Classifier(mlflow.pyfunc.PythonModel):
 			self,
 			data: Union[np.ndarray, pd.DataFrame],
 			target: Union[np.ndarray, pd.DataFrame]
-		) -> None:
+		) -> float:
 		return self.model.score(data, target)
 	def load_context(self, context):
 		pass

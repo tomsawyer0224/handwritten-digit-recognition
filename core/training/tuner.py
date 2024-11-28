@@ -38,7 +38,7 @@ class Tuner:
             run_name=parent_run_name
         )
         #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
-
+        
     def get_objective(self, parent_run_id):
         
         def objective(trial: optuna.trial.Trial) -> Any:
@@ -60,20 +60,20 @@ class Tuner:
                     if value["param_type"] == "float":
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_float(
-                            name=f"{model_class}_{name}",
+                            name=f"{model_class}-{name}",
                             low=low,
                             high=high
                         )
                     elif value["param_type"] == "int":
                         low, high = value["param_range"]
                         config["model_params"][name] = trial.suggest_int(
-                            name=f"{model_class}_{name}",
+                            name=f"{model_class}-{name}",
                             low=low,
                             high=high
                         )
                     elif value["param_type"] == "categorical":
                         config["model_params"][name] = trial.suggest_categorical(
-                            name=f"{model_class}_{name}",
+                            name=f"{model_class}-{name}",
                             choices=value["param_range"]
                         )
                     else:
@@ -82,18 +82,19 @@ class Tuner:
                     config["model_params"][name] = value
                 if config["model_params"].get("random_state") is None:
                     config["model_params"]["random_state"] = 42
-                '''
+                
                 self.mlflow_client.log_param(
                     run_id=child_run.info.run_id, 
                     key=name, 
                     value=config["model_params"][name]
                 )
-                '''
+            ''' 
             self.mlflow_client.log_param(
                 run_id=child_run.info.run_id, 
                 key="config", 
                 value=config
-            )   
+            )
+            '''  
             #dataset = self.data_module.get_training_dataset()
             train_dataset = self.datasets["train_dataset"]
             val_dataset = self.datasets["val_dataset"]
@@ -118,12 +119,27 @@ class Tuner:
         study.optimize(objective, **self.tuning_config)
         # best model
         best_params = study.best_params
+        model_config = dict(
+            model_class = None,
+            model_params = {}
+        )
+        for k, v in best_params.items():
+            model_class, param = k.split("-")
+            model_config["model_params"][param] = v
+        model_config["model_class"] = model_class
+        self.mlflow_client.log_param(
+                run_id=parent_run_id,
+                key="model_config",
+                value=model_config
+            )
+        '''
         for k, v in best_params.items():
             self.mlflow_client.log_param(
                 run_id=parent_run_id,
-                key=k.split("_")[-1],
+                key=k.split("-")[-1],
                 value=v
             )
+        '''
         best_value = study.best_value
         self.mlflow_client.log_metric(
             run_id=parent_run_id,
