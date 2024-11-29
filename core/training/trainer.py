@@ -1,4 +1,4 @@
-from mlflow import MlflowClient
+from mlflow.models import infer_signature
 import mlflow
 #from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
 from typing import Dict, Any, Callable
@@ -12,27 +12,48 @@ class Trainer:
             self,
             model_config: Dict[str, Any],
             data_module: Digit_Data_Module,
-            experiment_id: str
+            experiment_id: str,
+            run_name: str = "best_model"
         ) -> None:
         self.model_config = model_config
         self.data_module = data_module
-        self.experiment_id = self.experiment_id
+        self.experiment_id = experiment_id
+        self.run_name = run_name
     def train(self):
         preprocessor = self.data_module.get_preprocessor()
         datasets = self.data_module.get_training_dataset()
         inference_dataset = self.data_module.get_inference_dataset()
+        infer_data = inference_dataset["data"]
+        infer_target = inference_dataset["target"]
+        processed_infer_data = preprocessor(infer_data)
         train_dataset = datasets["train_dataset"]
         val_dataset = datasets["val_dataset"]
         clf = Classifier(config=self.model_config, preprocessor=preprocessor)
+        signature = infer_signature(
+                model_input=infer_data[:10],
+                model_output=infer_target[:10]
+            )
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
-            filter_string=f"attributes.run_name LIKE 'best_model'"
+            filter_string=f"attributes.run_name = '{self.run_name}'",
+            output_format="list"
         )
         for run in runs:
             mlflow.delete_run(run_id=run.info.run_id)
-        with mlflow.start_run(experiment_id=self.experiment_id, run_name="best_model"):
+        with mlflow.start_run(experiment_id=self.experiment_id, run_name=self.run_name):
             clf.fit(data=train_dataset["data"], target=train_dataset["target"])
             train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
             val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
-            mlflow.log_metrics({"train_accuracy": train_acc, "val_accuracy": val_acc})
+            test_acc = clf.score(
+                data=processed_infer_data,
+                target=infer_target
+            )
+            mlflow.log_metrics(
+                {"train_accuracy": train_acc, "val_accuracy": val_acc, "test_accuracy": test_acc}
+            )
             mlflow.log_param("model_config", self.model_config)
+            mlflow.pyfunc.log_model(
+                artifact_path="model",
+                python_model=clf,
+                signature=signature
+            )

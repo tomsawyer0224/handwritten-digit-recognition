@@ -27,6 +27,6 @@ class Classifier(mlflow.pyfunc.PythonModel):
 		pass
 	def predict(self, context, model_input, params=None):
 		X = self.preprocessor(model_input)
-		y_pred = self.model(X)
+		y_pred = self.model.predict(X)
 		return y_pred
 		
