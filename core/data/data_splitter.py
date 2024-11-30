@@ -4,14 +4,20 @@ from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
-def split_dataset(dataset: Bunch) -> Bunch:
+def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
     """
     splits a dataset into three datasets: train, val, test dataset
     args:
         dataset: Bunch object with keys: data, target
+        rescale: scales to [0.0, 1.0] range or not
     return:
         Bunch object with keys: train_dataset, val_dataset, test_dataset
     """
+    if rescale:
+        #dataset["data"] = dataset["data"]/255.0
+        dataset["data"] = (dataset["data"]-127.5)/127.5
+        logger.info("rescaled the dataset to [-1.0, 1.0]")
+        logger.info(f"{dataset["data"].min().min()=}, {dataset["data"].max().max()=}")
     train_data, test_data, train_target, test_target = train_test_split(
         dataset["data"],
         dataset["target"],
