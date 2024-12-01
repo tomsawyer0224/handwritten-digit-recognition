@@ -15,7 +15,17 @@ class Digit_Data_Module:
     def __init__(self) -> None:
         raw_dataset = load_dataset()
         self.datasets = split_dataset(dataset=raw_dataset, rescale=True)
-        self.preprocessor = Preprocessor()
+        #self.preprocessor = Preprocessor()
+    @property
+    def train_dataset(self):
+        return self.datasets["train_dataset"]
+    @property
+    def val_dataset(self):
+        return self.datasets["val_dataset"]
+    @property
+    def test_dataset(self):
+        return self.datasets["test_dataset"]
+    """
     def get_training_dataset(self) -> Bunch:
         # train_dataset
         train_data = self.datasets["train_dataset"]["data"]
@@ -39,3 +49,4 @@ class Digit_Data_Module:
         return self.datasets["test_dataset"]
     def get_preprocessor(self):
         return self.preprocessor
+    """

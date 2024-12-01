@@ -20,18 +20,22 @@ class Trainer:
         self.experiment_id = experiment_id
         self.run_name = run_name
     def train(self):
-        preprocessor = self.data_module.get_preprocessor()
-        datasets = self.data_module.get_training_dataset()
-        inference_dataset = self.data_module.get_inference_dataset()
-        infer_data = inference_dataset["data"]
-        infer_target = inference_dataset["target"]
-        processed_infer_data = preprocessor(infer_data)
-        train_dataset = datasets["train_dataset"]
-        val_dataset = datasets["val_dataset"]
-        clf = Classifier(config=self.model_config, preprocessor=preprocessor)
+        #preprocessor = self.data_module.get_preprocessor()
+        #datasets = self.data_module.get_training_dataset()
+        #inference_dataset = self.data_module.get_inference_dataset()
+        #infer_data = inference_dataset["data"]
+        #infer_target = inference_dataset["target"]
+        #processed_infer_data = preprocessor(infer_data)
+        #train_dataset = datasets["train_dataset"]
+        #val_dataset = datasets["val_dataset"]
+        train_dataset = self.data_module.train_dataset
+        val_dataset = self.data_module.val_dataset
+        test_dataset = self.data_module.test_dataset
+        #clf = Classifier(config=self.model_config, preprocessor=preprocessor)
+        clf = Classifier(config=self.model_config)
         signature = infer_signature(
-                model_input=infer_data[:10],
-                model_output=infer_target[:10]
+                model_input=test_dataset["data"][:10],
+                model_output=test_dataset["target"][:10]
             )
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
@@ -45,8 +49,8 @@ class Trainer:
             train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
             val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
             test_acc = clf.score(
-                data=processed_infer_data,
-                target=infer_target
+                data=test_dataset["data"],
+                target=test_dataset["target"]
             )
             mlflow.log_metrics(
                 {"train_accuracy": train_acc, "val_accuracy": val_acc, "test_accuracy": test_acc}

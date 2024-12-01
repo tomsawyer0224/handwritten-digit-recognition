@@ -7,9 +7,9 @@ from utils import create_model
 from core import Preprocessor
 
 class Classifier(mlflow.pyfunc.PythonModel):
-	def __init__(self, config: Dict[str, Any], preprocessor: Preprocessor) -> None:
+	def __init__(self, config: Dict[str, Any]) -> None:
 		self.model = create_model(config)
-		self.preprocessor = preprocessor
+		#self.preprocessor = preprocessor
 		#self.library = config.get("library")
 	def fit(
 			self,
@@ -26,7 +26,7 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	def load_context(self, context):
 		pass
 	def predict(self, context, model_input, params=None):
-		X = self.preprocessor(model_input)
-		y_pred = self.model.predict(X)
+		#X = self.preprocessor(model_input)
+		y_pred = self.model.predict(model_input)
 		return y_pred
 		

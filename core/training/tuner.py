@@ -22,9 +22,9 @@ class Tuner:
         ) -> None:
         self.model_config = model_config
         self.tuning_config = tuning_config
-        #self.data_module = data_module
-        self.datasets = data_module.get_training_dataset()
-        self.preprocessor = data_module.get_preprocessor()
+        self.data_module = data_module
+        #self.datasets = data_module.get_training_dataset()
+        #self.preprocessor = data_module.get_preprocessor()
         self.mlflow_client = mlflow_client
         self.experiment_id = experiment_id
         #logger.info("generate a new parent_run_name")
@@ -96,10 +96,13 @@ class Tuner:
             )
             '''  
             #dataset = self.data_module.get_training_dataset()
-            train_dataset = self.datasets["train_dataset"]
-            val_dataset = self.datasets["val_dataset"]
+            #train_dataset = self.datasets["train_dataset"]
+            #val_dataset = self.datasets["val_dataset"]
+            train_dataset = self.data_module.train_dataset
+            val_dataset = self.data_module.val_dataset
             #preprocessor = self.data_module.get_preprocessor()
-            clf = Classifier(config=config, preprocessor=self.preprocessor)
+            #clf = Classifier(config=config, preprocessor=self.preprocessor)
+            clf = Classifier(config=config) 
             clf.fit(train_dataset["data"], train_dataset["target"])
             acc = clf.score(val_dataset["data"], val_dataset["target"])
             self.mlflow_client.log_metric(
