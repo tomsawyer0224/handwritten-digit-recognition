@@ -34,7 +34,8 @@ sklearn_config = dict(
                     param_type = "float",
                     param_range = [0.0, 0.5]
                 ),
-                max_features = "sqrt"
+                max_features = "sqrt",
+                random_state = 42
             )
         )
 

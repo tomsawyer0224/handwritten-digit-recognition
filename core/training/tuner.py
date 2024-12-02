@@ -35,7 +35,8 @@ class Tuner:
         )
         self.parent_run = self.mlflow_client.create_run(
             experiment_id=self.experiment_id,
-            run_name=parent_run_name
+            run_name=parent_run_name,
+            tags={"candidate": True}
         )
         #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
         
@@ -102,7 +103,7 @@ class Tuner:
             val_dataset = self.data_module.val_dataset
             #preprocessor = self.data_module.get_preprocessor()
             #clf = Classifier(config=config, preprocessor=self.preprocessor)
-            clf = Classifier(config=config) 
+            clf = Classifier(config=config, use_default=False) 
             clf.fit(train_dataset["data"], train_dataset["target"])
             acc = clf.score(val_dataset["data"], val_dataset["target"])
             self.mlflow_client.log_metric(
@@ -113,9 +114,44 @@ class Tuner:
             
             return acc
         return objective
-    
+    def _train_default_model(self):
+        default_run_name = self.model_config["model_class"] + "_default_test"
+        runs = self.mlflow_client.search_runs(
+            experiment_ids=[self.experiment_id],
+            filter_string=f"attributes.run_name = '{default_run_name}'"
+        )
+        if len(runs) == 0:
+            default_run = self.mlflow_client.create_run(
+                experiment_id=self.experiment_id,
+                run_name=default_run_name,
+                tags={"candidate": True}
+            )
+            default_config = {
+                k: v for k, v in self.model_config.items()
+            }
+            default_config["model_params"] = dict(
+                random_state=self.model_config["model_params"].get("random_state")
+            )
+            self.mlflow_client.log_param(
+                run_id=default_run.info.run_id,
+                key="model_config",
+                value=default_config
+            )
+            clf = Classifier(config=self.model_config, use_default=True)
+            train_dataset = self.data_module.train_dataset
+            val_dataset = self.data_module.val_dataset
+            clf.fit(data=train_dataset["data"], target=train_dataset["target"])
+            acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
+            
+            self.mlflow_client.log_metric(
+                run_id=default_run.info.run_id,
+                key="accuracy",
+                value=acc
+            )
+
     def tune(self):
         logger.info(f"start hyper prameters tuning on {self.model_config["model_class"]}")
+        self._train_default_model()
         parent_run_id = self.parent_run.info.run_id
         objective = self.get_objective(parent_run_id)
         study = optuna.create_study(direction="maximize")
