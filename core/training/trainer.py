@@ -4,6 +4,7 @@ import mlflow
 from typing import Dict, Any, Callable
 from sklearn.utils import Bunch
 #import logging
+import numpy as np
 
 from core import Digit_Data_Module, Classifier
 
@@ -34,9 +35,10 @@ class Trainer:
         #clf = Classifier(config=self.model_config, preprocessor=preprocessor)
         clf = Classifier(config=self.model_config)
         signature = infer_signature(
-                model_input=test_dataset["data"][:10],
-                model_output=test_dataset["target"][:10]
+                model_input=test_dataset["data"][:2],
+                model_output=test_dataset["target"][:2]
             )
+        input_example = test_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f"attributes.run_name = '{self.run_name}'",
@@ -59,5 +61,14 @@ class Trainer:
             mlflow.pyfunc.log_model(
                 artifact_path="model",
                 python_model=clf,
-                signature=signature
+                signature=signature,
+                input_example=input_example
+            )
+            mlflow.log_image(
+                image = np.random.rand(28,28),
+                artifact_file="images/test.png"
+            )
+            mlflow.log_image(
+                image=np.random.rand(50,50),
+                artifact_file="metric_curve/loss.png"
             )
