@@ -31,14 +31,14 @@ class Trainer:
         #val_dataset = datasets["val_dataset"]
         train_dataset = self.data_module.train_dataset
         val_dataset = self.data_module.val_dataset
-        test_dataset = self.data_module.test_dataset
+        #test_dataset = self.data_module.test_dataset
         #clf = Classifier(config=self.model_config, preprocessor=preprocessor)
         clf = Classifier(config=self.model_config)
         signature = infer_signature(
-                model_input=test_dataset["data"][:2],
-                model_output=test_dataset["target"][:2]
+                model_input=val_dataset["data"][:2],
+                model_output=val_dataset["target"][:2]
             )
-        input_example = test_dataset["data"][:2]
+        input_example = val_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f"attributes.run_name = '{self.run_name}'",
@@ -50,12 +50,9 @@ class Trainer:
             clf.fit(data=train_dataset["data"], target=train_dataset["target"])
             train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
             val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
-            test_acc = clf.score(
-                data=test_dataset["data"],
-                target=test_dataset["target"]
-            )
+            
             mlflow.log_metrics(
-                {"train_accuracy": train_acc, "val_accuracy": val_acc, "test_accuracy": test_acc}
+                {"train_accuracy": train_acc, "val_accuracy": val_acc}
             )
             mlflow.log_param("model_config", self.model_config)
             mlflow.pyfunc.log_model(
