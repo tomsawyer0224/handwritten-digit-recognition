@@ -1,10 +1,21 @@
 from matplotlib import pyplot as plt
 from sklearn.utils import Bunch
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
 from typing import Union
+def visualize_confusion_matrix(
+        y_true: Union[np.ndarray, pd.DataFrame],
+        y_pred: Union[np.ndarray, pd.DataFrame],
+    ) -> plt.figure:
+        cmd = ConfusionMatrixDisplay.from_predictions(
+            y_true=y_true,
+            y_pred=y_pred,
+            normalize="true"
+        )
+        return cmd.figure_
 def visualize_image(
-        dataset: Bunch,
+        dataset: Union[Bunch, pd.DataFrame, np.ndarray],
         prediction: Union[np.ndarray, pd.DataFrame] = None,
         nrows=4,
         ncols=4,
@@ -13,26 +24,36 @@ def visualize_image(
     """
     visualizes images from dataset
     """
-    data = np.array(dataset["data"])
-    target = np.array(dataset["target"])
-    N = len(target)
+    if isinstance(dataset, Bunch):
+        data = np.array(dataset["data"])
+        target = np.array(dataset["target"])
+    else:
+        data = np.array(dataset)
+        target = None
+    N = len(data)
     n_samples = nrows*ncols
     random_indices = np.random.permutation(N)
     indice_sample = random_indices[:n_samples]
     data_sample = data[indice_sample].reshape(-1, 28, 28)
-    target_sample = target[indice_sample]
+    if target is not None:
+        target_sample = target[indice_sample]
+    else:
+        target_sample = np.array([""]*n_samples)
     if prediction is not None:
         prediction = np.array(prediction)
         pred_sample = prediction[indice_sample]
-        pred_sample = [f"pred: {ps}/" for ps in pred_sample]
+        #pred_sample = [f"pred: {ps}/" for ps in pred_sample]
     else:
         pred_sample = [""]*n_samples
     fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+    pr = "pred:" if prediction is not None else ""
+    lb = "label:" if target is not None else ""
+    slash = "/" if prediction is not None and target is not None else ""
     for i in range(nrows):
         for j in range(ncols):
             ax[i,j].set_axis_off()
             ax[i,j].imshow(data_sample[(i+1)*(j+1) - 1], cmap = "gray")
-            title = f"{pred_sample[(i+1)*(j+1) - 1]}gt: {target_sample[(i+1)*(j+1) - 1]}"
+            title = f"{pr} {pred_sample[(i+1)*(j+1) - 1]}{slash}{lb} {target_sample[(i+1)*(j+1) - 1]}"
             ax[i,j].set_title(title)
     return fig
 
