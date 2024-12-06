@@ -1,25 +1,36 @@
 from matplotlib import pyplot as plt
 from sklearn.utils import Bunch
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Tuple
+def visualize_classification_report(
+        y_true: Union[np.ndarray, pd.DataFrame],
+        y_pred: Union[np.ndarray, pd.DataFrame]
+    ) -> str:
+    report = classification_report(y_true=y_true, y_pred=y_pred)
+    return report
 def visualize_confusion_matrix(
         y_true: Union[np.ndarray, pd.DataFrame],
         y_pred: Union[np.ndarray, pd.DataFrame],
+        name: str = ""
     ) -> plt.figure:
         cmd = ConfusionMatrixDisplay.from_predictions(
             y_true=y_true,
             y_pred=y_pred,
-            normalize="true"
+            normalize="true",
+            values_format=".2f"
         )
+        fig = cmd.figure_
+        fig.suptitle(name)
         return cmd.figure_
 def visualize_image(
         dataset: Union[Bunch, pd.DataFrame, np.ndarray],
         prediction: Union[np.ndarray, pd.DataFrame] = None,
-        nrows=4,
-        ncols=4,
-        figsize=(10,10)
+        nrows: int = 4,
+        ncols: int = 4,
+        figsize: Tuple[int]= (10,10),
+        name: str = ""
     ) -> plt.figure:
     """
     visualizes images from dataset
@@ -55,5 +66,6 @@ def visualize_image(
             ax[i,j].imshow(data_sample[(i+1)*(j+1) - 1], cmap = "gray")
             title = f"{pr} {pred_sample[(i+1)*(j+1) - 1]}{slash}{lb} {target_sample[(i+1)*(j+1) - 1]}"
             ax[i,j].set_title(title)
+    fig.suptitle(name)
     return fig
 

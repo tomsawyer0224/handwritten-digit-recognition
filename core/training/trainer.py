@@ -7,6 +7,7 @@ from sklearn.utils import Bunch
 import numpy as np
 
 from core import Digit_Data_Module, Classifier
+from utils import visualize_image, visualize_confusion_matrix, visualize_classification_report
 
 class Trainer:
     def __init__(
@@ -47,25 +48,73 @@ class Trainer:
         for run in runs:
             mlflow.delete_run(run_id=run.info.run_id)
         with mlflow.start_run(experiment_id=self.experiment_id, run_name=self.run_name):
-            clf.fit(data=train_dataset["data"], target=train_dataset["target"])
+            # train
+            train_image = visualize_image(
+                dataset=train_dataset,
+                prediction=None,
+                nrows=4,
+                ncols=4,
+                figsize=(10,10),
+                name="training dataset"
+            )
+            mlflow.log_figure(
+                figure=train_image,
+                artifact_file="report/training_images.png"
+            )
+            if clf.library == "xgboost":
+                fit_config = dict(eval_set=[(val_dataset["data"], val_dataset["target"])])
+            else:
+                fit_config = {}
+            clf.fit(data=train_dataset["data"], target=train_dataset["target"], **fit_config)
             train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
+        
+            # validate
             val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
-            
             mlflow.log_metrics(
                 {"train_accuracy": train_acc, "val_accuracy": val_acc}
             )
+            val_predictions = clf.model.predict(val_dataset["data"])
+
+            val_image = visualize_image(
+                dataset=val_dataset,
+                prediction=val_predictions,
+                nrows=4,
+                ncols=4,
+                figsize=(10,10),
+                name="validation dataset"
+            )
+            mlflow.log_figure(
+                figure=val_image,
+                artifact_file="report/val_images.png"
+            )
+
+            # log confusion matrix
+            cm = visualize_confusion_matrix(
+                y_true=val_dataset["target"],
+                y_pred=val_predictions,
+                name="confusion matrix"
+            )
+            mlflow.log_figure(
+                figure=cm,
+                artifact_file="report/confusion_matrix.png"
+            )
+
+            # log classification report
+            cls_rpt = visualize_classification_report(
+                y_true=val_dataset["target"],
+                y_pred=val_predictions
+            )
+            mlflow.log_text(
+                text=cls_rpt,
+                artifact_file="report/classification_report.txt"
+            )
+            # log parameters
             mlflow.log_param("model_config", self.model_config)
+            
+            # log model
             mlflow.pyfunc.log_model(
                 artifact_path="model",
                 python_model=clf,
                 signature=signature,
                 input_example=input_example
-            )
-            mlflow.log_image(
-                image = np.random.rand(28,28),
-                artifact_file="images/test.png"
-            )
-            mlflow.log_image(
-                image=np.random.rand(50,50),
-                artifact_file="metric_curve/loss.png"
             )

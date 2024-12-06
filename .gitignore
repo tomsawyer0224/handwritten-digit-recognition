@@ -167,3 +167,5 @@ digit_data/
 mlruns/
 /data
 /digit_data
+
+catboost_info
