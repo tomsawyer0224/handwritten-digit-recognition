@@ -5,7 +5,7 @@ from mlflow import MlflowClient
 import unittest
 import logging
 
-from core import Trainer, Digit_Data_Module
+from core import Trainer, Digit_Data_Module, Toy_Data_Module
 from utils import get_or_create_experiment
 
 logging.basicConfig(
@@ -20,7 +20,9 @@ sklearn_config = dict(
             model_class = "RandomForestClassifier",
             model_params = dict(
                 n_estimators = 50,
-                max_features = "sqrt"
+                max_features = "sqrt",
+                verbose=0,
+                n_jobs=2
             )
         )
 
@@ -29,7 +31,9 @@ xgboost_config = dict(
             model_class = "XGBClassifier",
             model_params = dict(
                 tree_method="hist",
-                early_stopping_rounds=3
+                early_stopping_rounds=3,
+                verbosity=0,
+                n_jobs=2
             )
         )
 
@@ -38,7 +42,9 @@ lightgbm_config = dict(
             model_class = "LGBMClassifier",
             model_params = dict(
                 boosting_type="gbdt",
-                max_depth=3
+                max_depth=3,
+                verbosity=-1,
+                n_jobs=2
             )
         )
 
@@ -46,13 +52,16 @@ catboost_config = dict(
             library = "catboost",
             model_class = "CatBoostClassifier",
             model_params = dict(
-                iterations=500,
-                depth=8
+                iterations=10,
+                depth=8,
+                verbose=False
             )
         )
 
 logger.info("prepare digit data module")
 data_module = Digit_Data_Module()
+#logger.info("prepare toy data module")
+#data_module = Toy_Data_Module()
 
 logger.info("create mlflow client")
 mlflow_client = MlflowClient()

@@ -5,7 +5,7 @@ from mlflow import MlflowClient
 import unittest
 import logging
 
-from core import Tuner, Digit_Data_Module
+from core import Tuner, Digit_Data_Module, Toy_Data_Module
 from utils import get_or_create_experiment
 
 logging.basicConfig(
@@ -68,8 +68,10 @@ tuning_config = dict(
     n_jobs = 2
 )
 
-logger.info("prepare digit data module")
-data_module = Digit_Data_Module()
+#logger.info("prepare digit data module")
+#data_module = Digit_Data_Module()
+logger.info("prepare toy data module")
+data_module = Toy_Data_Module()
 
 logger.info("create mlflow client")
 mlflow_client = MlflowClient()
