@@ -58,10 +58,10 @@ catboost_config = dict(
             )
         )
 
-logger.info("prepare digit data module")
-data_module = Digit_Data_Module()
-#logger.info("prepare toy data module")
-#data_module = Toy_Data_Module()
+#logger.info("prepare digit data module")
+#data_module = Digit_Data_Module()
+logger.info("prepare toy data module")
+data_module = Toy_Data_Module()
 
 logger.info("create mlflow client")
 mlflow_client = MlflowClient()
@@ -80,7 +80,7 @@ class Test_Trainer(unittest.TestCase):
         )
         trainer.train()
         print("-"*30)"""
-    """def test_Trainer_xgboost(self):
+    def test_Trainer_xgboost(self):
         print("training xgboost model")
         trainer = Trainer(
             model_config=xgboost_config,
@@ -89,8 +89,8 @@ class Test_Trainer(unittest.TestCase):
             run_name="xgboost_best_model"
         )
         trainer.train()
-        print("-"*30)"""
-    def test_Trainer_lightgbm(self):
+        print("-"*30)
+    """def test_Trainer_lightgbm(self):
         print("training lightgbm model")
         trainer = Trainer(
             model_config=lightgbm_config,
@@ -99,7 +99,7 @@ class Test_Trainer(unittest.TestCase):
             run_name="lightgbm_best_model"
         )
         trainer.train()
-        print("-"*30)
+        print("-"*30)"""
     
     """def test_Trainer_catboost(self):
         print("training catboost model")

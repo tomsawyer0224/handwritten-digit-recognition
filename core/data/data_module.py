@@ -58,9 +58,15 @@ class Toy_Data_Module:
         rng = np.random.RandomState(seed=42)
         data = rng.rand(n_samples, 784)
         target = rng.randint(0, 10, (n_samples,))
-        raw_datasets = Bunch(data=pd.DataFrame(data), target=pd.Series(target))
+        raw_datasets = Bunch(data=pd.DataFrame(data), target=pd.Series(target).astype(str))
         #raw_datasets = Bunch(data=data, target=target)
         self.datasets = split_dataset(dataset=raw_datasets, rescale=False)
+    @staticmethod
+    def id2name(label: pd.Series):
+        return label.astype(str)
+    @staticmethod
+    def name2id(label: pd.Series):
+        return label.astype(int)
     @property
     def train_dataset(self):
         return self.datasets["train_dataset"]

@@ -36,9 +36,9 @@ class Trainer:
         #clf = Classifier(config=self.model_config, preprocessor=preprocessor)
         clf = Classifier(config=self.model_config)
         signature = infer_signature(
-                model_input=val_dataset["data"][:2],
-                model_output=val_dataset["target"][:2]
-            )
+            model_input=val_dataset["data"][:2],
+            model_output=val_dataset["target"][:2]
+        )
         input_example = val_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
@@ -62,7 +62,7 @@ class Trainer:
                 artifact_file="report/training_images.png"
             )
             if clf.library == "xgboost":
-                fit_config = dict(eval_set=[(val_dataset["data"], val_dataset["target"])])
+                fit_config = dict(eval_set=[(val_dataset["data"], val_dataset["target"])], verbose=False)
             else:
                 fit_config = {}
             clf.fit(data=train_dataset["data"], target=train_dataset["target"], **fit_config)

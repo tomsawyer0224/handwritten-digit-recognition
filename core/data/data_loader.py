@@ -16,6 +16,6 @@ def load_dataset() -> Bunch:
         #data_home="./core/data/digit_data",
         data_home="./data"
     )
-    raw_dataset["target"] = raw_dataset["target"].astype(int)
+    #raw_dataset["target"] = raw_dataset["target"].astype(int)
     logger.info(f"loaded MNIST Digit Dataset with {len(raw_dataset["target"])} data points")
     return raw_dataset
