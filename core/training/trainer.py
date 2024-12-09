@@ -7,7 +7,13 @@ from sklearn.utils import Bunch
 import numpy as np
 
 from core import Digit_Data_Module, Classifier
-from utils import visualize_image, visualize_confusion_matrix, visualize_classification_report
+from utils import (
+    visualize_image,
+    visualize_confusion_matrix,
+    visualize_classification_report,
+    id2name,
+    name2id
+)
 
 class Trainer:
     def __init__(
@@ -59,21 +65,31 @@ class Trainer:
             )
             mlflow.log_figure(
                 figure=train_image,
-                artifact_file="report/training_images.png"
+                artifact_file="report/train_images.png"
             )
+            train_data = train_dataset["data"]
+            train_target = name2id(train_dataset["target"])
+            val_data = val_dataset["data"]
+            val_target = name2id(val_dataset["target"])
             if clf.library == "xgboost":
-                fit_config = dict(eval_set=[(val_dataset["data"], val_dataset["target"])], verbose=False)
+                fit_config = dict(eval_set=[(val_data, val_target)], verbose=False)
             else:
                 fit_config = {}
-            clf.fit(data=train_dataset["data"], target=train_dataset["target"], **fit_config)
-            train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
-        
+            
+            clf.fit(data=train_data, target=train_target, **fit_config)
+            #clf.fit(data=train_dataset["data"], target=train_dataset["target"], **fit_config)
+            #train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
+            train_acc = clf.score(data=train_data, target=train_target)
+            
             # validate
-            val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
+
+            #val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
+            val_acc = clf.score(data=val_data, target=val_target)
             mlflow.log_metrics(
                 {"train_accuracy": train_acc, "val_accuracy": val_acc}
             )
             val_predictions = clf.model.predict(val_dataset["data"])
+            val_predictions = id2name(val_predictions)
 
             val_image = visualize_image(
                 dataset=val_dataset,

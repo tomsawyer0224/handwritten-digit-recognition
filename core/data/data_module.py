@@ -18,6 +18,12 @@ class Digit_Data_Module:
         raw_dataset = load_dataset()
         self.datasets = split_dataset(dataset=raw_dataset, rescale=True)
         #self.preprocessor = Preprocessor()
+    """@staticmethod
+    def id2name(label: pd.Series):
+        return label.astype(str)
+    @staticmethod
+    def name2id(label: pd.Series):
+        return label.astype(int)"""
     @property
     def train_dataset(self):
         return self.datasets["train_dataset"]
@@ -61,12 +67,12 @@ class Toy_Data_Module:
         raw_datasets = Bunch(data=pd.DataFrame(data), target=pd.Series(target).astype(str))
         #raw_datasets = Bunch(data=data, target=target)
         self.datasets = split_dataset(dataset=raw_datasets, rescale=False)
-    @staticmethod
+    """@staticmethod
     def id2name(label: pd.Series):
         return label.astype(str)
     @staticmethod
     def name2id(label: pd.Series):
-        return label.astype(int)
+        return label.astype(int)"""
     @property
     def train_dataset(self):
         return self.datasets["train_dataset"]

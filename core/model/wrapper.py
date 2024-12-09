@@ -2,9 +2,9 @@ import mlflow
 import numpy as np
 import pandas as pd
 from typing import Union, Dict, Any
-from utils import create_model
+from utils import create_model, id2name, name2id
 
-from core import Preprocessor
+#from core import Preprocessor, Digit_Data_Module
 
 class Classifier(mlflow.pyfunc.PythonModel):
 	def __init__(self, config: Dict[str, Any], use_default: bool = False) -> None:
@@ -29,5 +29,6 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	def predict(self, context, model_input, params=None):
 		#X = self.preprocessor(model_input)
 		y_pred = self.model.predict(model_input)
+		y_pred = id2name(y_pred)
 		return y_pred
 		
