@@ -4,9 +4,10 @@ from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
 from typing import Dict, Any, Callable
 from sklearn.utils import Bunch
 import logging
+import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
-from utils import generate_next_run_name
+from utils import generate_next_run_name, name2id, id2name
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +40,17 @@ class Tuner:
             tags={"candidate": True}
         )
         #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
-        
+    def _get_training_dataset(self):
+        train_dataset = self.data_module.train_dataset
+        train_data = train_dataset["data"]
+        train_target = name2id(train_dataset["target"])
+        val_dataset = self.data_module.val_dataset
+        val_data = val_dataset["data"]
+        val_target = name2id(val_dataset["target"])
+        return train_data, train_target, val_data, val_target
+    def _get_fit_config(self):
+        pass
     def get_objective(self, parent_run_id):
-        
         def objective(trial: optuna.trial.Trial) -> Any:
             #logger.info("create a new child run")
             child_run_name = f"{self.model_config["model_class"]}_param_set_{trial.number}"
@@ -100,12 +109,36 @@ class Tuner:
             #train_dataset = self.datasets["train_dataset"]
             #val_dataset = self.datasets["val_dataset"]
             train_dataset = self.data_module.train_dataset
+            train_data = train_dataset["data"]
+            train_target = name2id(train_dataset["target"])
             val_dataset = self.data_module.val_dataset
+            val_data = val_dataset["data"]
+            val_target = name2id(val_dataset["target"])
             #preprocessor = self.data_module.get_preprocessor()
             #clf = Classifier(config=config, preprocessor=self.preprocessor)
-            clf = Classifier(config=config, use_default=False) 
-            clf.fit(train_dataset["data"], train_dataset["target"])
-            acc = clf.score(val_dataset["data"], val_dataset["target"])
+            if clf.library == "xgboost":
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                    verbose=False
+                )
+            elif clf.library == "lightgbm":
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                    callbacks=[lbg.early_stopping(stopping_rounds=10)]
+                )
+            elif clf.library == "catboost":
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                )
+            else:
+                fit_config = {}
+            clf = Classifier(config=config, use_default=False, **fit_config) 
+            #clf.fit(train_dataset["data"], train_dataset["target"])
+            clf.fit(train_data, train_target, **fit_config)
+
+            # validate
+            #acc = clf.score(val_dataset["data"], val_dataset["target"])
+            acc = clf.score(val_data, val_target)
             self.mlflow_client.log_metric(
                 run_id=child_run.info.run_id,
                 key="accuracy",

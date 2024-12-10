@@ -5,6 +5,7 @@ from typing import Dict, Any, Callable
 from sklearn.utils import Bunch
 #import logging
 import numpy as np
+import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
 from utils import (
@@ -28,18 +29,9 @@ class Trainer:
         self.experiment_id = experiment_id
         self.run_name = run_name
     def train(self):
-        #preprocessor = self.data_module.get_preprocessor()
-        #datasets = self.data_module.get_training_dataset()
-        #inference_dataset = self.data_module.get_inference_dataset()
-        #infer_data = inference_dataset["data"]
-        #infer_target = inference_dataset["target"]
-        #processed_infer_data = preprocessor(infer_data)
-        #train_dataset = datasets["train_dataset"]
-        #val_dataset = datasets["val_dataset"]
         train_dataset = self.data_module.train_dataset
         val_dataset = self.data_module.val_dataset
-        #test_dataset = self.data_module.test_dataset
-        #clf = Classifier(config=self.model_config, preprocessor=preprocessor)
+
         clf = Classifier(config=self.model_config)
         signature = infer_signature(
             model_input=val_dataset["data"][:2],
@@ -72,7 +64,19 @@ class Trainer:
             val_data = val_dataset["data"]
             val_target = name2id(val_dataset["target"])
             if clf.library == "xgboost":
-                fit_config = dict(eval_set=[(val_data, val_target)], verbose=False)
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                    verbose=False
+                )
+            elif clf.library == "lightgbm":
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                    callbacks=[lbg.early_stopping(stopping_rounds=10)]
+                )
+            elif clf.library == "catboost":
+                fit_config = dict(
+                    eval_set=[(val_data, val_target)],
+                )
             else:
                 fit_config = {}
             
