@@ -73,7 +73,7 @@ logger.info("create mlflow experiment")
 experiment_name = "handwriten-digit-recognition"
 experiment_id = get_or_create_experiment(experiment_name=experiment_name, client=mlflow_client)
 class Test_Trainer(unittest.TestCase):
-    """
+    """"""
     def test_Trainer_sklearn(self):
         print("training sklearn model")
         trainer = Trainer(
@@ -84,8 +84,8 @@ class Test_Trainer(unittest.TestCase):
         )
         trainer.train()
         print("-"*30)
-    """
-    """
+    
+    """"""
     def test_Trainer_xgboost(self):
         print("training xgboost model")
         trainer = Trainer(
@@ -96,8 +96,8 @@ class Test_Trainer(unittest.TestCase):
         )
         trainer.train()
         print("-"*30)
-    """
-    """
+    
+    """"""
     def test_Trainer_lightgbm(self):
         print("training lightgbm model")
         trainer = Trainer(
@@ -108,7 +108,7 @@ class Test_Trainer(unittest.TestCase):
         )
         trainer.train()
         print("-"*30)
-    """
+    
     """"""
     def test_Trainer_catboost(self):
         print("training catboost model")

@@ -7,7 +7,14 @@ import logging
 import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
-from utils import generate_next_run_name, name2id, id2name
+from utils import (
+    generate_next_run_name,
+    name2id,
+    id2name,
+    get_fit_config,
+    get_tuning_config,
+    prepare_training_data
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +47,6 @@ class Tuner:
             tags={"candidate": True}
         )
         #logger.info(f"created a new parent run with parent_run_name: {parent_run_name}")
-    def _get_training_dataset(self):
-        train_dataset = self.data_module.train_dataset
-        train_data = train_dataset["data"]
-        train_target = name2id(train_dataset["target"])
-        val_dataset = self.data_module.val_dataset
-        val_data = val_dataset["data"]
-        val_target = name2id(val_dataset["target"])
-        return train_data, train_target, val_data, val_target
-    def _get_fit_config(self):
-        pass
     def get_objective(self, parent_run_id):
         def objective(trial: optuna.trial.Trial) -> Any:
             #logger.info("create a new child run")
@@ -62,6 +59,16 @@ class Tuner:
                     run_name = child_run_name
                 )
             #logger.info(f"created a new child run with child_run_name: {child_run_name}")
+            
+            config = get_tuning_config(
+                model_config=self.model_config, trial=trial
+            )
+            self.mlflow_client.log_param(
+                run_id=child_run.info.run_id, 
+                key="model_config", 
+                value=config
+            )
+            """
             config = {k: v for k, v in self.model_config.items() if k != "model_params"}
             config["model_params"] = {}
             model_class = config["model_class"]
@@ -98,24 +105,29 @@ class Tuner:
                     key=name, 
                     value=config["model_params"][name]
                 )
-            ''' 
-            self.mlflow_client.log_param(
-                run_id=child_run.info.run_id, 
-                key="config", 
-                value=config
-            )
-            '''  
+            """
+
             #dataset = self.data_module.get_training_dataset()
             #train_dataset = self.datasets["train_dataset"]
             #val_dataset = self.datasets["val_dataset"]
             train_dataset = self.data_module.train_dataset
+            val_dataset = self.data_module.val_dataset
+            train_data, train_target, val_data, val_target = prepare_training_data(
+                train_dataset=train_dataset, val_dataset=val_dataset
+            )
+            """
             train_data = train_dataset["data"]
             train_target = name2id(train_dataset["target"])
-            val_dataset = self.data_module.val_dataset
             val_data = val_dataset["data"]
             val_target = name2id(val_dataset["target"])
+            """
             #preprocessor = self.data_module.get_preprocessor()
             #clf = Classifier(config=config, preprocessor=self.preprocessor)
+            
+            fit_config = get_fit_config(
+                classifier=clf, val_data=val_data, val_target=val_target
+            )
+            """
             if clf.library == "xgboost":
                 fit_config = dict(
                     eval_set=[(val_data, val_target)],
@@ -132,6 +144,8 @@ class Tuner:
                 )
             else:
                 fit_config = {}
+            """
+            
             clf = Classifier(config=config, use_default=False, **fit_config) 
             #clf.fit(train_dataset["data"], train_dataset["target"])
             clf.fit(train_data, train_target, **fit_config)
@@ -173,6 +187,10 @@ class Tuner:
             clf = Classifier(config=self.model_config, use_default=True)
             train_dataset = self.data_module.train_dataset
             val_dataset = self.data_module.val_dataset
+            train_data, train_target, val_data, val_target = prepare_training_data(
+                train_dataset=train_dataset, val_dataset=val_dataset
+            )
+            
             clf.fit(data=train_dataset["data"], target=train_dataset["target"])
             acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
             

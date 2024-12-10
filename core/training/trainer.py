@@ -13,7 +13,9 @@ from utils import (
     visualize_confusion_matrix,
     visualize_classification_report,
     id2name,
-    name2id
+    name2id,
+    prepare_training_data,
+    get_fit_config
 )
 
 class Trainer:
@@ -46,7 +48,7 @@ class Trainer:
         for run in runs:
             mlflow.delete_run(run_id=run.info.run_id)
         with mlflow.start_run(experiment_id=self.experiment_id, run_name=self.run_name):
-            # train
+            # visualize training images
             train_image = visualize_image(
                 dataset=train_dataset,
                 prediction=None,
@@ -59,42 +61,31 @@ class Trainer:
                 figure=train_image,
                 artifact_file="report/train_images.png"
             )
-            train_data = train_dataset["data"]
-            train_target = name2id(train_dataset["target"])
-            val_data = val_dataset["data"]
-            val_target = name2id(val_dataset["target"])
-            if clf.library == "xgboost":
-                fit_config = dict(
-                    eval_set=[(val_data, val_target)],
-                    verbose=False
-                )
-            elif clf.library == "lightgbm":
-                fit_config = dict(
-                    eval_set=[(val_data, val_target)],
-                    callbacks=[lbg.early_stopping(stopping_rounds=10)]
-                )
-            elif clf.library == "catboost":
-                fit_config = dict(
-                    eval_set=[(val_data, val_target)],
-                )
-            else:
-                fit_config = {}
-            
-            clf.fit(data=train_data, target=train_target, **fit_config)
-            #clf.fit(data=train_dataset["data"], target=train_dataset["target"], **fit_config)
-            #train_acc = clf.score(data=train_dataset["data"], target=train_dataset["target"])
-            train_acc = clf.score(data=train_data, target=train_target)
-            
-            # validate
 
-            #val_acc = clf.score(data=val_dataset["data"], target=val_dataset["target"])
-            val_acc = clf.score(data=val_data, target=val_target)
-            mlflow.log_metrics(
-                {"train_accuracy": train_acc, "val_accuracy": val_acc}
+            # prepare for training
+            train_data, train_target, val_data, val_target = prepare_training_data(
+                train_dataset=train_dataset, val_dataset=val_dataset
             )
+            fit_config = get_fit_config(
+                classifier=clf, val_data=val_data, val_target=val_target
+            )
+            
+            # train the model
+            clf.fit(data=train_data, target=train_target, **fit_config)
+            
+            # log the training accuracy
+            train_acc = clf.score(data=train_data, target=train_target)
+            mlflow.log_metric(key="train_accuracy", value=train_acc)
+            
+            # log the validation accuracy
+            val_acc = clf.score(data=val_data, target=val_target)
+            mlflow.log_metric(key="val_accuracy", value=val_acc)
+            
+            # predict on the validation dataset
             val_predictions = clf.model.predict(val_dataset["data"])
             val_predictions = id2name(val_predictions)
 
+            # visualize predictions on the validation dataset
             val_image = visualize_image(
                 dataset=val_dataset,
                 prediction=val_predictions,
@@ -108,7 +99,7 @@ class Trainer:
                 artifact_file="report/val_images.png"
             )
 
-            # log confusion matrix
+            # confusion matrix
             cm = visualize_confusion_matrix(
                 y_true=val_dataset["target"],
                 y_pred=val_predictions,
@@ -119,7 +110,7 @@ class Trainer:
                 artifact_file="report/confusion_matrix.png"
             )
 
-            # log classification report
+            # classification report
             cls_rpt = visualize_classification_report(
                 y_true=val_dataset["target"],
                 y_pred=val_predictions
@@ -128,6 +119,7 @@ class Trainer:
                 text=cls_rpt,
                 artifact_file="report/classification_report.txt"
             )
+
             # log parameters
             mlflow.log_param("model_config", self.model_config)
             

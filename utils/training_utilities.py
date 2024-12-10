@@ -1,6 +1,6 @@
 import pandas as pd
 import lightgbm as lbg
-from core import Classifier, Digit_Data_Module
+#from core import Classifier, Digit_Data_Module
 from typing import Dict
 import optuna
 
@@ -8,7 +8,7 @@ def id2name(label: pd.Series):
     return label.astype(str)
 def name2id(label: pd.Series):
     return label.astype(int)
-def get_fit_config(classifier: Classifier, val_data, val_target):
+def get_fit_config(classifier, val_data, val_target):
     if classifier.library == "xgboost":
         fit_config = dict(
             eval_set=[(val_data, val_target)],
@@ -32,7 +32,7 @@ def prepare_training_data(train_dataset, val_dataset):
     val_data = val_dataset["data"]
     val_target = name2id(val_dataset["target"])
     return train_data, train_target, val_data, val_target
-def parse_config(model_config: Dict, trial: optuna.trial.Trial):
+def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
     config = {k: v for k, v in model_config.items() if k != "model_params"}
     config["model_params"] = {}
     model_class = config["model_class"]
