@@ -32,6 +32,16 @@ def prepare_training_data(train_dataset, val_dataset):
     val_data = val_dataset["data"]
     val_target = name2id(val_dataset["target"])
     return train_data, train_target, val_data, val_target
+def get_default_config(model_config: Dict) -> Dict:
+    default_config = {
+        k: v for k, v in model_config.items() if k != "model_params"
+    }
+    if model_config["model_params"].get("random_state") is None:
+        default_config["model_params"]["random_state"] = 42
+    if model_config["library"] in ["xgboost", "catboost"]:
+        if model_config["model_params"].get("early_stopping_rounds") is None:
+            default_config["model_params"]["early_stopping_rounds"] = 10
+    return default_config
 def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
     config = {k: v for k, v in model_config.items() if k != "model_params"}
     config["model_params"] = {}
@@ -63,13 +73,9 @@ def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
             config["model_params"][name] = value
         if config["model_params"].get("random_state") is None:
             config["model_params"]["random_state"] = 42
-    return config
-def get_default_config(model_config: Dict) -> Dict:
-    default_config = {
-        k: v for k, v in model_config.items()
-    }
-    default_config["model_params"] = dict(
-        random_state=model_config["model_params"].get("random_state")
-    )
-    
-    return default_config
+    tuning_config = get_default_config(model_config=model_config)|config
+    return tuning_config
+def get_training_config(model_config):
+    training_config = get_default_config(model_config=model_config)|model_config
+    return training_config
+

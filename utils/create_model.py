@@ -23,6 +23,7 @@ from catboost import CatBoostClassifier
 import optuna
 
 from typing import Dict, Any
+from .training_utilities import get_default_config
 
 def create_model(config: Dict[str, Any], return_default_model: bool = False):
     """
@@ -48,7 +49,7 @@ def create_model(config: Dict[str, Any], return_default_model: bool = False):
     if config["model_params"].get("early_stopping_rounds") is None:
         if config["library"] in ["xgboost", "catboost"]:
             config["model_params"]["early_stopping_rounds"] = 10
-    
+
     if return_default_model:
         default_config = dict(
             random_state = config["model_params"]["random_state"],
