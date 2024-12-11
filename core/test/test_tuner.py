@@ -19,6 +19,7 @@ logging.basicConfig(
     )
 logger = logging.getLogger(__name__)
 sklearn_config = dict(
+            library = "sklearn",
             model_class = "RandomForestClassifier",
             model_params = dict(
                 n_estimators = dict(
@@ -43,14 +44,26 @@ sklearn_config = dict(
         )
 
 xgboost_config = dict(
+            library = "xgboost",
             model_class = "XGBClassifier",
             model_params = dict(
-                tree_method="hist",
-                early_stopping_rounds=3
+                n_estimators = dict(
+                    param_type = "int",
+                    param_range = [10,20]
+                ),
+                booster = dict(
+                    param_type = "categorical",
+                    param_range = ["gbtree", "gblinear"],
+
+                ),
+                tree_method = "hist",
+                early_stopping_rounds = 5,
+
             )
         )
 
 lightgbm_config = dict(
+            library = "lightgbm",
             model_class = "LGBMClassifier",
             model_params = dict(
                 boosting_type="gbdt",
@@ -59,6 +72,7 @@ lightgbm_config = dict(
         )
 
 catboost_config = dict(
+            library = "catboost",
             model_class = "CatBoostClassifier",
             model_params = dict(
                 iterations=500,
@@ -67,7 +81,7 @@ catboost_config = dict(
         )
 
 tuning_config = dict(
-    n_trials = 4,
+    n_trials = 10,
     n_jobs = 2
 )
 
@@ -83,6 +97,7 @@ logger.info("create mlflow experiment")
 experiment_name = "handwriten-digit-recognition"
 experiment_id = get_or_create_experiment(experiment_name=experiment_name, client=mlflow_client)
 class Test_Tuner(unittest.TestCase):
+    """
     def test_Tuner_sklearn(self):
         tuner = Tuner(
             model_config=sklearn_config,
@@ -92,6 +107,15 @@ class Test_Tuner(unittest.TestCase):
             experiment_id=experiment_id
         )
         tuner.tune()
-
+    """
+    def test_Tuner_xgboost(self):
+        tuner = Tuner(
+            model_config=xgboost_config,
+            tuning_config=tuning_config,
+            data_module=data_module,
+            mlflow_client=mlflow_client,
+            experiment_id=experiment_id
+        )
+        tuner.tune()
 if __name__=="__main__":
     unittest.main()

@@ -10,5 +10,6 @@ from .training_utilities import (
     name2id,
     get_fit_config,
     prepare_training_data,
-    get_tuning_config
+    get_tuning_config,
+    get_default_config
 )

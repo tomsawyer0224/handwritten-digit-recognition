@@ -64,3 +64,12 @@ def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
         if config["model_params"].get("random_state") is None:
             config["model_params"]["random_state"] = 42
     return config
+def get_default_config(model_config: Dict) -> Dict:
+    default_config = {
+        k: v for k, v in model_config.items()
+    }
+    default_config["model_params"] = dict(
+        random_state=model_config["model_params"].get("random_state")
+    )
+    
+    return default_config
