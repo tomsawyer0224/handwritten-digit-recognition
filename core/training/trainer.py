@@ -15,7 +15,8 @@ from utils import (
     id2name,
     name2id,
     prepare_training_data,
-    get_fit_config
+    get_fit_config,
+    prepare_model_config
 )
 
 class Trainer:
@@ -33,8 +34,12 @@ class Trainer:
     def train(self):
         train_dataset = self.data_module.train_dataset
         val_dataset = self.data_module.val_dataset
-
-        clf = Classifier(config=self.model_config)
+        model_config = prepare_model_config(
+            model_config=self.model_config,
+            trial=None,
+            return_default_config=False
+        )
+        clf = Classifier(model_config=model_config)
         signature = infer_signature(
             model_input=val_dataset["data"][:2],
             model_output=val_dataset["target"][:2]
@@ -82,8 +87,7 @@ class Trainer:
             mlflow.log_metric(key="val_accuracy", value=val_acc)
             
             # predict on the validation dataset
-            val_predictions = clf.model.predict(val_dataset["data"])
-            val_predictions = id2name(val_predictions)
+            val_predictions = clf.get_prediction(data=val_data)
 
             # visualize predictions on the validation dataset
             val_image = visualize_image(
@@ -121,7 +125,7 @@ class Trainer:
             )
 
             # log parameters
-            mlflow.log_param("model_config", self.model_config)
+            mlflow.log_param("model_config", model_config)
             
             # log model
             mlflow.pyfunc.log_model(

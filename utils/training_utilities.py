@@ -1,7 +1,7 @@
 import pandas as pd
 import lightgbm as lbg
 #from core import Classifier, Digit_Data_Module
-from typing import Dict
+from typing import Dict, Any
 import optuna
 
 def id2name(label: pd.Series):
@@ -78,4 +78,59 @@ def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
 def get_training_config(model_config):
     training_config = get_default_config(model_config=model_config)|model_config
     return training_config
-
+def prepare_model_config(
+        model_config: Dict[str, Any],
+        trial = None,
+        return_default_config: bool = False
+    ) -> Dict[str, Any]:
+    default_config = {
+        k: v for k, v in model_config.items() if k != "model_params"
+    }
+    random_state = model_config["model_params"].get("random_state")
+    default_config["model_params"] = dict(
+        random_state = random_state if random_state else 42
+    )
+    if model_config["library"] in ["xgboost", "catboost"]:
+        early_stopping_rounds = model_config["model_params"].get("early_stopping_rounds")
+        default_config["model_params"]["early_stopping_rounds"] = early_stopping_rounds \
+        if early_stopping_rounds else 10
+    print(default_config)
+    if return_default_config:
+        return default_config
+    final_config = {
+        k: v for k, v in default_config.items()
+    }
+    if trial is None:
+        final_config["model_params"] = default_config["model_params"]|model_config["model_params"]
+        return final_config
+    
+    config = {k: v for k, v in model_config.items() if k != "model_params"}
+    config["model_params"] = {}
+    model_class = config["model_class"]
+    for name, value in model_config["model_params"].items():
+        if isinstance(value, dict):
+            if value["param_type"] == "float":
+                low, high = value["param_range"]
+                config["model_params"][name] = trial.suggest_float(
+                    name=f"{model_class}-{name}",
+                    low=low,
+                    high=high
+                )
+            elif value["param_type"] == "int":
+                low, high = value["param_range"]
+                config["model_params"][name] = trial.suggest_int(
+                    name=f"{model_class}-{name}",
+                    low=low,
+                    high=high
+                )
+            elif value["param_type"] == "categorical":
+                config["model_params"][name] = trial.suggest_categorical(
+                    name=f"{model_class}-{name}",
+                    choices=value["param_range"]
+                )
+            else:
+                raise "param_type should be in ['float', 'int', 'categorical']"
+        else:
+            config["model_params"][name] = value
+    final_config["model_params"] = default_config["model_params"]|config["model_params"]
+    return final_config

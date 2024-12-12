@@ -13,7 +13,7 @@ class Test_create_model(unittest.TestCase):
                 max_depth = 10
             )
         )
-        print(create_model(sklearn_config, return_default_model=False))
+        print(create_model(sklearn_config))
 
         xgboost_config = dict(
             model_class = "XGBClassifier",
@@ -22,7 +22,7 @@ class Test_create_model(unittest.TestCase):
                 early_stopping_rounds=3
             )
         )
-        print(create_model(xgboost_config, return_default_model=True))
+        print(create_model(xgboost_config))
 
         lightgbm_config = dict(
             model_class = "LGBMClassifier",
@@ -31,7 +31,7 @@ class Test_create_model(unittest.TestCase):
                 max_depth=3
             )
         )
-        print(create_model(lightgbm_config, return_default_model=True))
+        print(create_model(lightgbm_config))
 
         catboost_config = dict(
             model_class = "CatBoostClassifier",
@@ -40,7 +40,7 @@ class Test_create_model(unittest.TestCase):
                 depth=8
             )
         )
-        print(create_model(catboost_config, return_default_model=True))
+        print(create_model(catboost_config))
 
 if __name__ == "__main__":
     unittest.main()

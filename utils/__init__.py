@@ -11,5 +11,6 @@ from .training_utilities import (
     get_fit_config,
     prepare_training_data,
     get_tuning_config,
-    get_default_config
+    get_default_config,
+    prepare_model_config
 )

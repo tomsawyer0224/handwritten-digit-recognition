@@ -14,7 +14,8 @@ from utils import (
     get_fit_config,
     get_default_config,
     get_tuning_config,
-    prepare_training_data
+    prepare_training_data,
+    prepare_model_config
 )
 
 logger = logging.getLogger(__name__)
@@ -54,20 +55,22 @@ class Tuner:
                     },
                     run_name = child_run_name
                 )
-            config = get_tuning_config(
-                model_config=self.model_config, trial=trial
+            model_config = prepare_model_config(
+                model_config=self.model_config,
+                trial=trial,
+                return_default_config=False
             )
             self.mlflow_client.log_param(
                 run_id=child_run.info.run_id, 
-                key="model_config", 
-                value=config
+                key="model_config",
+                value=model_config
             )
             train_dataset = self.data_module.train_dataset
             val_dataset = self.data_module.val_dataset
             train_data, train_target, val_data, val_target = prepare_training_data(
                 train_dataset=train_dataset, val_dataset=val_dataset
             )
-            clf = Classifier(config=config, use_default=False)
+            clf = Classifier(model_config=model_config)
             fit_config = get_fit_config(
                 classifier=clf, val_data=val_data, val_target=val_target
             )
@@ -95,13 +98,17 @@ class Tuner:
                 run_name=default_run_name,
                 tags={"candidate": True}
             )
-            default_config = get_default_config(self.model_config)
+            default_config = prepare_model_config(
+                model_config=self.model_config,
+                trial=None,
+                return_default_config=True
+            )
             self.mlflow_client.log_param(
                 run_id=default_run.info.run_id,
                 key="model_config",
                 value=default_config
             )
-            clf = Classifier(config=self.model_config, use_default=True)
+            clf = Classifier(model_config=default_config)
             train_dataset = self.data_module.train_dataset
             val_dataset = self.data_module.val_dataset
             train_data, train_target, val_data, val_target = prepare_training_data(
