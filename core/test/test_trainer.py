@@ -35,7 +35,8 @@ xgboost_config = dict(
                 verbosity=0,
                 n_jobs=2,
                 objective="multi:softmax",
-                num_class=10
+                num_class=10,
+                random_state = 30
             )
         )
 

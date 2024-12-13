@@ -75,6 +75,7 @@ lightgbm_config = dict(
                 objective="multiclass",
                 verbosity=-1,
                 n_jobs = 2,
+                random_state = 30,
                 n_estimators=dict(
                     param_type = "int",
                     param_range = [10,20]

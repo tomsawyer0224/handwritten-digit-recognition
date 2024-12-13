@@ -12,10 +12,9 @@ from utils import (
     name2id,
     id2name,
     get_fit_config,
-    get_default_config,
-    get_tuning_config,
     prepare_training_data,
-    prepare_model_config
+    prepare_model_config,
+    get_fixed_config
 )
 
 logger = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ class Tuner:
         self.parent_run = self.mlflow_client.create_run(
             experiment_id=self.experiment_id,
             run_name=parent_run_name,
-            tags={"candidate": True}
+            tags={"candidate": "good"}
         )
     def get_objective(self, parent_run_id):
         def objective(trial: optuna.trial.Trial) -> Any:
@@ -96,7 +95,7 @@ class Tuner:
             default_run = self.mlflow_client.create_run(
                 experiment_id=self.experiment_id,
                 run_name=default_run_name,
-                tags={"candidate": True}
+                tags={"candidate": "good"}
             )
             default_config = prepare_model_config(
                 model_config=self.model_config,
@@ -133,16 +132,13 @@ class Tuner:
         objective = self.get_objective(parent_run_id)
         study = optuna.create_study(direction="maximize")
         study.optimize(objective, **self.tuning_config)
+
         # best model
         best_params = study.best_params
-        model_config = dict(
-            model_class = None,
-            model_params = {}
-        )
+        model_config = get_fixed_config(self.model_config)
         for k, v in best_params.items():
-            model_class, param = k.split("-")
+            _, param = k.split("-")
             model_config["model_params"][param] = v
-        model_config["model_class"] = model_class
         self.mlflow_client.log_param(
                 run_id=parent_run_id,
                 key="model_config",

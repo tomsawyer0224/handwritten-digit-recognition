@@ -12,8 +12,6 @@ from utils import (
     visualize_image,
     visualize_confusion_matrix,
     visualize_classification_report,
-    id2name,
-    name2id,
     prepare_training_data,
     get_fit_config,
     prepare_model_config
@@ -52,7 +50,11 @@ class Trainer:
         )
         for run in runs:
             mlflow.delete_run(run_id=run.info.run_id)
-        with mlflow.start_run(experiment_id=self.experiment_id, run_name=self.run_name):
+        with mlflow.start_run(
+                experiment_id=self.experiment_id, 
+                run_name=self.run_name, 
+                tags={"candidate": "best"}
+            ):
             # visualize training images
             train_image = visualize_image(
                 dataset=train_dataset,

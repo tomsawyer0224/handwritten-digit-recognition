@@ -1,7 +1,7 @@
 import pandas as pd
 import lightgbm as lbg
 #from core import Classifier, Digit_Data_Module
-from typing import Dict, Any
+from typing import Dict, Any, Union
 import optuna
 
 def id2name(label: pd.Series):
@@ -32,69 +32,17 @@ def prepare_training_data(train_dataset, val_dataset):
     val_data = val_dataset["data"]
     val_target = name2id(val_dataset["target"])
     return train_data, train_target, val_data, val_target
-def get_default_config(model_config: Dict) -> Dict:
-    default_config = {
-        k: v for k, v in model_config.items() if k != "model_params"
-    }
-    if model_config["model_params"].get("random_state") is None:
-        default_config["model_params"]["random_state"] = 42
-    if model_config["library"] in ["xgboost", "catboost"]:
-        if model_config["model_params"].get("early_stopping_rounds") is None:
-            default_config["model_params"]["early_stopping_rounds"] = 10
-    return default_config
-def get_tuning_config(model_config: Dict, trial: optuna.trial.Trial):
-    config = {k: v for k, v in model_config.items() if k != "model_params"}
-    config["model_params"] = {}
-    model_class = config["model_class"]
-    for name, value in model_config["model_params"].items():
-        if isinstance(value, dict):
-            if value["param_type"] == "float":
-                low, high = value["param_range"]
-                config["model_params"][name] = trial.suggest_float(
-                    name=f"{model_class}-{name}",
-                    low=low,
-                    high=high
-                )
-            elif value["param_type"] == "int":
-                low, high = value["param_range"]
-                config["model_params"][name] = trial.suggest_int(
-                    name=f"{model_class}-{name}",
-                    low=low,
-                    high=high
-                )
-            elif value["param_type"] == "categorical":
-                config["model_params"][name] = trial.suggest_categorical(
-                    name=f"{model_class}-{name}",
-                    choices=value["param_range"]
-                )
-            else:
-                raise "param_type should be in ['float', 'int', 'categorical']"
-        else:
-            config["model_params"][name] = value
-        if config["model_params"].get("random_state") is None:
-            config["model_params"]["random_state"] = 42
-    tuning_config = get_default_config(model_config=model_config)|config
-    return tuning_config
-def get_training_config(model_config):
-    training_config = get_default_config(model_config=model_config)|model_config
-    return training_config
 def prepare_model_config(
         model_config: Dict[str, Any],
-        trial = None,
+        trial: optuna.trial.Trial = None,
         return_default_config: bool = False
     ) -> Dict[str, Any]:
     default_config = {
         k: v for k, v in model_config.items() if k != "model_params"
     }
-    random_state = model_config["model_params"].get("random_state")
     default_config["model_params"] = dict(
-        random_state = random_state if random_state else 42
+        random_state = model_config["model_params"].get("random_state", 42)
     )
-    if model_config["library"] in ["xgboost", "catboost"]:
-        early_stopping_rounds = model_config["model_params"].get("early_stopping_rounds")
-        default_config["model_params"]["early_stopping_rounds"] = early_stopping_rounds \
-        if early_stopping_rounds else 10
-    print(default_config)
     if return_default_config:
         return default_config
     final_config = {
@@ -134,3 +82,13 @@ def prepare_model_config(
             config["model_params"][name] = value
     final_config["model_params"] = default_config["model_params"]|config["model_params"]
     return final_config
+def get_fixed_config(model_config: Dict[str, Any]) -> Dict[str, Any]:
+    fixed_config = {
+        k: v for k, v in model_config.items() if k != "model_params"
+    }
+    fixed_config["model_params"] = dict()
+    for k, v in model_config["model_params"].items():
+        if not isinstance(v, dict):
+            fixed_config["model_params"][k] = v
+    fixed_config["model_params"]["random_state"] = model_config["model_params"].get("random_state", 42)
+    return fixed_config
