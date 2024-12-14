@@ -1,0 +1,11 @@
+library: "catboost"
+model_class: "CatBoostClassifier"
+model_params:
+  learning_rate:
+      param_type: "float"
+      param_range: [0.08,0.15]
+  iterations: 5
+  loss_function: "MultiClass"
+  early_stopping_rounds: 2
+  verbose: False
+  allow_writing_files: False

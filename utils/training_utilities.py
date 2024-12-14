@@ -22,6 +22,7 @@ def get_fit_config(classifier, val_data, val_target):
     elif classifier.library == "catboost":
         fit_config = dict(
             eval_set=[(val_data, val_target)],
+            verbose=False
         )
     else:
         fit_config = {}

@@ -6,7 +6,7 @@ import unittest
 import logging
 
 from core import Trainer, Digit_Data_Module, Toy_Data_Module
-from utils import get_or_create_experiment
+from utils import get_or_create_experiment, load_config
 
 logging.basicConfig(
         format="{asctime}::{levelname}::{name}::{message}",
@@ -15,52 +15,10 @@ logging.basicConfig(
         level=logging.INFO
     )
 logger = logging.getLogger(__name__)
-sklearn_config = dict(
-            library = "sklearn",
-            model_class = "RandomForestClassifier",
-            model_params = dict(
-                n_estimators = 50,
-                max_features = "sqrt",
-                verbose=0,
-                n_jobs=2
-            )
-        )
-
-xgboost_config = dict(
-            library = "xgboost",
-            model_class = "XGBClassifier",
-            model_params = dict(
-                tree_method="hist",
-                early_stopping_rounds=10,
-                verbosity=0,
-                n_jobs=2,
-                objective="multi:softmax",
-                num_class=10,
-                random_state = 30
-            )
-        )
-
-lightgbm_config = dict(
-            library = "lightgbm",
-            model_class = "LGBMClassifier",
-            model_params = dict(
-                boosting_type="gbdt",
-                max_depth=3,
-                verbosity=-1,
-                n_jobs=2
-            )
-        )
-
-catboost_config = dict(
-            library = "catboost",
-            model_class = "CatBoostClassifier",
-            model_params = dict(
-                iterations=10,
-                depth=8,
-                verbose=False,
-                early_stopping_rounds=10
-            )
-        )
+sklearn_config = load_config("config/sklearn_training_config.yaml")
+xgboost_config = load_config("config/xgboost_training_config.yaml")
+lightgbm_config = load_config("config/lightgbm_training_config.yaml")
+catboost_config = load_config("config/catboost_training_config.yaml")
 
 #logger.info("prepare digit data module")
 #data_module = Digit_Data_Module()

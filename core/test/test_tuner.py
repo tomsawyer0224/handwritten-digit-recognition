@@ -8,7 +8,7 @@ import logging
 from core import Tuner, Digit_Data_Module, Toy_Data_Module
 from utils import (
     get_or_create_experiment,
-    
+    load_config
 )
 
 logging.basicConfig(
@@ -18,100 +18,11 @@ logging.basicConfig(
         level=logging.INFO
     )
 logger = logging.getLogger(__name__)
-sklearn_config = dict(
-            library = "sklearn",
-            model_class = "RandomForestClassifier",
-            model_params = dict(
-                n_jobs = 2,
-                n_estimators = dict(
-                    param_type = "int",
-                    param_range = [50, 100]
-                ),
-                criterion = dict(
-                    param_type = "categorical",
-                    param_range = ["gini", "entropy", "log_loss"]
-                ),
-                max_depth = dict(
-                    param_type = "int",
-                    param_range = [2, 10],
-                ),
-                ccp_alpha = dict(
-                    param_type = "float",
-                    param_range = [0.0, 0.5]
-                ),
-                max_features = "sqrt",
-                random_state = 42
-            )
-        )
-
-xgboost_config = dict(
-            library = "xgboost",
-            model_class = "XGBClassifier",
-            model_params = dict(
-                n_estimators = dict(
-                    param_type = "int",
-                    param_range = [10,20]
-                ),
-                booster = dict(
-                    param_type = "categorical",
-                    param_range = ["gbtree", "gblinear"],
-
-                ),
-                learning_rate = dict(
-                    param_type = "float",
-                    param_range = [0.08,0.15]
-                ),
-                early_stopping_rounds = 5,
-                verbosity=0,
-                n_jobs = 2,
-            )
-        )
-
-lightgbm_config = dict(
-            library = "lightgbm",
-            model_class = "LGBMClassifier",
-            model_params = dict(
-                max_depth=3,
-                objective="multiclass",
-                verbosity=-1,
-                n_jobs = 2,
-                random_state = 30,
-                n_estimators=dict(
-                    param_type = "int",
-                    param_range = [10,20]
-                ),
-                boosting_type=dict(
-                    param_type = "categorical",
-                    param_range = ["gbdt", "dart"],
-                ),
-                learning_rate=dict(
-                    param_type = "float",
-                    param_range = [0.08,0.15]
-                )
-            )
-        )
-
-catboost_config = dict(
-            library = "catboost",
-            model_class = "CatBoostClassifier",
-            model_params = dict(
-                iterations=5,
-                loss_function="MultiClass",
-                early_stopping_rounds=5,
-                verbose=False,
-                depth=8,
-                learning_rate=dict(
-                    param_type = "float",
-                    param_range = [0.08,0.15]
-                )
-            )
-        )
-
-tuning_config = dict(
-    n_trials = 3,
-    n_jobs = 2
-)
-
+sklearn_config = load_config("config/sklearn_tuning_config.yaml")
+xgboost_config = load_config("config/xgboost_tuning_config.yaml")
+lightgbm_config = load_config("config/lightgbm_tuning_config.yaml")
+catboost_config = load_config("config/catboost_tuning_config.yaml")
+tuning_config = load_config("config/tuning_config.yaml")
 #logger.info("prepare digit data module")
 #data_module = Digit_Data_Module()
 logger.info("prepare toy data module")

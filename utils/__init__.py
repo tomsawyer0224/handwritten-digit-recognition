@@ -13,3 +13,4 @@ from .training_utilities import (
     prepare_model_config,
     get_fixed_config
 )
+from .config_parser import load_config

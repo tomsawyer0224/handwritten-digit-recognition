@@ -1,0 +1,10 @@
+library: "sklearn"
+model_class: "RandomForestClassifier"
+model_params:
+    n_jobs: 2
+    n_estimators: 20
+    criterion: "log_loss"
+    max_depth: 4
+    ccp_alpha: 0.1
+    max_features: "sqrt"
+    random_state: 30

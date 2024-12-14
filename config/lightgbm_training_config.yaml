@@ -1,0 +1,11 @@
+library: "lightgbm"
+model_class: "LGBMClassifier"
+model_params:
+    n_estimators: 10
+    boosting_type: "gbdt"
+    learning_rate: 0.13
+    max_depth: 3
+    objective: "multiclass"
+    verbosity: -1
+    n_jobs: 2
+    random_state: 50

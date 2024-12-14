@@ -1,0 +1,16 @@
+library: "xgboost"
+model_class: "XGBClassifier"
+model_params:
+    n_estimators:
+        param_type: "int"
+        param_range: [10,20]
+    booster:
+        param_type: "categorical"
+        param_range: ["gbtree", "gblinear"]
+    learning_rate:
+        param_type: "float"
+        param_range: [0.08,0.15]
+    early_stopping_rounds: 5
+    verbosity: 0
+    n_jobs: 2
+    random_state: 40

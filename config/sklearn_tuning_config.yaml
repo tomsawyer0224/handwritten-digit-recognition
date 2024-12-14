@@ -1,0 +1,18 @@
+library: "sklearn"
+model_class: "RandomForestClassifier"
+model_params:
+    n_jobs: 2
+    n_estimators:
+        param_type: "int"
+        param_range: [50, 100]
+    criterion:
+        param_type: "categorical"
+        param_range: ["gini", "entropy", "log_loss"]
+    max_depth:
+        param_type: "int"
+        param_range: [2, 10]
+    ccp_alpha:
+        param_type: "float"
+        param_range: [0.0, 0.5]
+    max_features: "sqrt"
+    random_state: 30
