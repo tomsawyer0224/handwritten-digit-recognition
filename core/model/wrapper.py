@@ -2,9 +2,7 @@ import mlflow
 import numpy as np
 import pandas as pd
 from typing import Union, Dict, Any
-from utils import create_model, id2name, name2id
-
-#from core import Preprocessor, Digit_Data_Module
+from utils import create_model, id2name
 
 class Classifier(mlflow.pyfunc.PythonModel):
 	def __init__(self, model_config: Dict[str, Any]) -> None:
