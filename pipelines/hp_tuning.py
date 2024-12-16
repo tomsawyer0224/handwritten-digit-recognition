@@ -4,13 +4,12 @@ import mlflow
 from mlflow import MlflowClient
 from typing import Dict, Any
 import more_itertools
+import yaml
 from core import (
     Trainer,
     Tuner,
-    Digit_Data_Module,
-    Toy_Data_Module
+    Digit_Data_Module
 )
-from utils import load_config
 
 class HyperParamTuningPipeline:
     def __init__(
@@ -21,7 +20,8 @@ class HyperParamTuningPipeline:
             mlflow_client: MlflowClient,
             experiment_id: str
         ) -> None:
-        #self.model_configs = model_configs
+        self.experiment_id = experiment_id
+        self.data_module = data_module
         self.tuners = [
             Tuner(
                 model_config=model_config,
@@ -33,5 +33,25 @@ class HyperParamTuningPipeline:
             for model_config in model_configs.values()
         ]
     def run_pipeline(self):
-        more_itertools.consume((tuner.tune() for tuner in self.tuners))
+        # tuning
+        #more_itertools.consume((tuner.tune() for tuner in self.tuners))
+        # find the best
+        runs = mlflow.search_runs(
+            experiment_ids=[self.experiment_id],
+            filter_string=f'tags."candidate" = "good"',
+            output_format="list",
+            order_by=["metrics.accuracy DESC"]
+        )
+        best_run = runs[0]
+        best_model_config = yaml.safe_load(best_run.data.params["model_config"])
+        # re-train
+        trainer = Trainer(
+            model_config=best_model_config,
+            data_module=self.data_module,
+            experiment_id=self.experiment_id,
+            run_name="best_model"
+        )
+        trainer.train()
+
+
     
