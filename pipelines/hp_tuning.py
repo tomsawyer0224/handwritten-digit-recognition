@@ -10,24 +10,17 @@ from core import (
     Tuner,
     Digit_Data_Module
 )
-from utils import get_or_create_experiment
+
 class HyperParamTuningPipeline:
     def __init__(
             self,
             model_configs: Dict[str, Dict[str, Any]],
             tuning_config: Dict[str, Any],
             data_module: Digit_Data_Module,
-            #mlflow_client: MlflowClient,
-            #experiment_id: str,
-            tracking_uri: str = None,
-            experiment_name: str = "experiment"
+            mlflow_client: MlflowClient,
+            experiment_id: str
         ) -> None:
-        mlflow_client = MlflowClient(tracking_uri=tracking_uri)
-        mlflow.set_tracking_uri(uri=tracking_uri if tracking_uri is not None else "")
-        self.experiment_id = get_or_create_experiment(
-            experiment_name=experiment_name,
-            client=mlflow_client
-        )
+        self.experiment_id = experiment_id
         self.data_module = data_module
         self.tuners = [
             Tuner(
@@ -35,13 +28,13 @@ class HyperParamTuningPipeline:
                 tuning_config=tuning_config,
                 data_module=data_module,
                 mlflow_client=mlflow_client,
-                experiment_id=self.experiment_id
+                experiment_id=experiment_id
             )
             for model_config in model_configs.values()
         ]
     def run_pipeline(self):
         # tuning
-        more_itertools.consume((tuner.tune() for tuner in self.tuners))
+        #more_itertools.consume((tuner.tune() for tuner in self.tuners))
         # find the best
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],

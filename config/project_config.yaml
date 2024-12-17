@@ -1,5 +1,5 @@
 mlflow:
-  tracking_uri: "http://127.0.0.1:8000"
+  tracking_uri: "http://127.0.0.1:5000"
   experiment_name: "handwriten-digit-recognition"
 optuna:
   n_trials: 3
@@ -41,3 +41,33 @@ models:
       verbosity: 0
       n_jobs: 2
       random_state: 40
+  model_3:
+    library: "lightgbm"
+    model_class: "LGBMClassifier"
+    model_params:
+      n_estimators:
+        param_type: "int"
+        param_range: [10,20]
+      boosting_type:
+        param_type: "categorical"
+        param_range: ["gbdt", "dart"]
+      learning_rate:
+        param_type: "float"
+        param_range: [0.08,0.15]
+      max_depth: 3
+      objective: "multiclass"
+      verbosity: -1
+      n_jobs: 2
+      random_state: 50
+  model_4:
+    library: "catboost"
+    model_class: "CatBoostClassifier"
+    model_params:
+      learning_rate:
+        param_type: "float"
+        param_range: [0.08,0.15]
+      iterations: 5
+      loss_function: "MultiClass"
+      early_stopping_rounds: 2
+      verbose: False
+      allow_writing_files: False
