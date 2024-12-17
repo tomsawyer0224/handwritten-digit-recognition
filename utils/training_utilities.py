@@ -17,7 +17,7 @@ def get_fit_config(classifier, val_data, val_target):
     elif classifier.library == "lightgbm":
         fit_config = dict(
             eval_set=[(val_data, val_target)],
-            callbacks=[lbg.early_stopping(stopping_rounds=10)]
+            callbacks=[lbg.early_stopping(stopping_rounds=10, verbose=False)]
         )
     elif classifier.library == "catboost":
         fit_config = dict(
