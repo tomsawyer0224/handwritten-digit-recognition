@@ -1,0 +1,15 @@
+artifact_uri: /home/ano/projects/ML/handwriten-digit-recognition/127.0.0.1:8000/910887139536251208/839371ca181644e68972106135a54b20/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '910887139536251208'
+lifecycle_stage: active
+run_id: 839371ca181644e68972106135a54b20
+run_name: LGBMClassifier_param_set_1
+run_uuid: 839371ca181644e68972106135a54b20
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734510594190
+status: 1
+tags: []
+user_id: unknown

@@ -1,0 +1,1 @@
+{'library': 'lightgbm', 'model_class': 'LGBMClassifier', 'model_params': {'random_state': 50, 'n_estimators': 14, 'boosting_type': 'gbdt', 'learning_rate': 0.14588262960717763, 'max_depth': 3, 'objective': 'multiclass', 'verbosity': -1, 'n_jobs': 2}}

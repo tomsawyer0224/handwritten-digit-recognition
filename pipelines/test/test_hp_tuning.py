@@ -23,17 +23,8 @@ project_config = load_config("config/project_config.yaml")
 logger.info("prepare toy data module")
 data_module = Toy_Data_Module()
 
-logger.info("create mlflow client")
-mlflow_client = MlflowClient(
-    #tracking_uri=project_config["mlflow"]["tracking_uri"]
-)
-
-logger.info("create mlflow experiment")
+tracking_uri = project_config["mlflow"]["tracking_uri"]
 experiment_name = "handwriten-digit-recognition"
-experiment_id = get_or_create_experiment(
-    experiment_name=experiment_name, #project_config["mlflow"]["experiment_name"],
-    client=mlflow_client
-)
 
 class Test_hp_tuning(unittest.TestCase):
     def test_hp_tuning(self):
@@ -41,8 +32,8 @@ class Test_hp_tuning(unittest.TestCase):
             model_configs=project_config["models"],
             tuning_config=project_config["optuna"],
             data_module=data_module,
-            mlflow_client=mlflow_client,
-            experiment_id=experiment_id
+            tracking_uri=tracking_uri,
+            experiment_name=experiment_name
         )
         hp_tuning_ppl.run_pipeline()
 if __name__=="__main__":

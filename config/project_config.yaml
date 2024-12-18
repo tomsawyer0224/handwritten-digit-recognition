@@ -1,5 +1,5 @@
 mlflow:
-  tracking_uri: "http://127.0.0.1:5000"
+  tracking_uri: "127.0.0.1:8000"
   experiment_name: "handwriten-digit-recognition"
 optuna:
   n_trials: 3

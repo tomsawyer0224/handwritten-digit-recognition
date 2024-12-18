@@ -165,6 +165,9 @@ cython_debug/
 digit_data/
 .digit_data/
 mlruns/
+mlartifacts/*
+mlartifacts/
+mlartifacts
 /data
 /digit_data
 

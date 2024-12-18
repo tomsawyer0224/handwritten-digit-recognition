@@ -1,0 +1,16 @@
+artifact_uri: /home/ano/projects/ML/handwriten-digit-recognition/127.0.0.1:8000/910887139536251208/9b8d48bff869458aa2c61801f5d7ca19/artifacts
+deleted_time: 1734510603351
+end_time: 1734508912803
+entry_point_name: ''
+experiment_id: '910887139536251208'
+lifecycle_stage: deleted
+run_id: 9b8d48bff869458aa2c61801f5d7ca19
+run_name: best_model
+run_uuid: 9b8d48bff869458aa2c61801f5d7ca19
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734508905954
+status: 3
+tags: []
+user_id: ano
