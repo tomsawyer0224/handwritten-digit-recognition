@@ -1,6 +1,7 @@
 from mlflow import MlflowClient
 from mlflow.entities import Run
 import logging
+import mlflow
 
 logger = logging.getLogger(__name__)
 def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
@@ -12,10 +13,14 @@ def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
     returns:
         experiment ID
     """
-    if experiment := client.get_experiment_by_name(experiment_name):
+    """if experiment := client.get_experiment_by_name(experiment_name):
         return experiment.experiment_id
     else:
-        return client.create_experiment(experiment_name)
+        return client.create_experiment(experiment_name)"""
+    if experiment := mlflow.get_experiment_by_name(experiment_name):
+        return experiment.experiment_id
+    else:
+        return mlflow.create_experiment(experiment_name)
 def get_or_create_run(experiment_id: str, client: MlflowClient) -> Run:
     pass
 def generate_next_run_name(
