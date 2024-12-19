@@ -1,0 +1,15 @@
+artifact_uri: /home/ano/projects/ML/handwriten-digit-recognition/127.0.0.1:8000/910887139536251208/454156a429f1486bb84f641fa858f39d/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '910887139536251208'
+lifecycle_stage: active
+run_id: 454156a429f1486bb84f641fa858f39d
+run_name: XGBClassifier_param_set_0
+run_uuid: 454156a429f1486bb84f641fa858f39d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734599384112
+status: 1
+tags: []
+user_id: unknown

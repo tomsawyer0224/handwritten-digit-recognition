@@ -11,6 +11,14 @@ from core import (
     Digit_Data_Module
 )
 from utils import get_or_create_experiment
+
+logging.basicConfig(
+        format="{asctime}::{levelname}::{name}::{message}",
+        style="{",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        level=logging.INFO
+    )
+logger = logging.getLogger(__name__)
 class HyperParamTuningPipeline:
     def __init__(
             self,
@@ -22,10 +30,12 @@ class HyperParamTuningPipeline:
         ) -> None:
         mlflow_client = MlflowClient(tracking_uri=tracking_uri)
         mlflow.set_tracking_uri(uri=tracking_uri)
+        logger.info(f"create an experiment with name {experiment_name}")
         self.experiment_id = get_or_create_experiment(
             experiment_name=experiment_name,
             client=mlflow_client
         )
+        logger.info(f"experiment {experiment_name} was created with id: {self.experiment_id}")
         self.data_module = data_module
         self.tuners = [
             Tuner(

@@ -1,0 +1,15 @@
+artifact_uri: /home/ano/projects/ML/handwriten-digit-recognition/127.0.0.1:8000/910887139536251208/7c2658a1df82461faf182055038d6dd5/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '910887139536251208'
+lifecycle_stage: active
+run_id: 7c2658a1df82461faf182055038d6dd5
+run_name: RandomForestClassifier_param_set_2
+run_uuid: 7c2658a1df82461faf182055038d6dd5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734599494503
+status: 1
+tags: []
+user_id: unknown

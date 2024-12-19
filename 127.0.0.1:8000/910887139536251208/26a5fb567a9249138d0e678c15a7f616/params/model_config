@@ -1,0 +1,1 @@
+{'library': 'catboost', 'model_class': 'CatBoostClassifier', 'model_params': {'random_state': 42, 'learning_rate': 0.08320110673910938, 'iterations': 5, 'loss_function': 'MultiClass', 'early_stopping_rounds': 2, 'verbose': False, 'allow_writing_files': False}}

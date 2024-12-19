@@ -1,0 +1,15 @@
+artifact_uri: /home/ano/projects/ML/handwriten-digit-recognition/127.0.0.1:8000/910887139536251208/b7dd72eb049a4116a1e1855230174438/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '910887139536251208'
+lifecycle_stage: active
+run_id: b7dd72eb049a4116a1e1855230174438
+run_name: CatBoostClassifier_test_6
+run_uuid: b7dd72eb049a4116a1e1855230174438
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734599492804
+status: 1
+tags: []
+user_id: unknown
