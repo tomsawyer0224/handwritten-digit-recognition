@@ -1,1 +1,0 @@
-{'library': 'sklearn', 'model_class': 'RandomForestClassifier', 'model_params': {'random_state': 30, 'n_jobs': 2, 'n_estimators': 71, 'criterion': 'gini', 'max_depth': 9, 'ccp_alpha': 0.00015103875222388652, 'max_features': 'sqrt'}}

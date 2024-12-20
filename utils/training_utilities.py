@@ -17,7 +17,7 @@ def get_fit_config(classifier, val_data, val_target):
     elif classifier.library == "lightgbm":
         fit_config = dict(
             eval_set=[(val_data, val_target)],
-            callbacks=[lbg.early_stopping(stopping_rounds=10)]
+            callbacks=[lbg.early_stopping(stopping_rounds=10, verbose=False)]
         )
     elif classifier.library == "catboost":
         fit_config = dict(
@@ -44,6 +44,15 @@ def prepare_model_config(
     default_config["model_params"] = dict(
         random_state = model_config["model_params"].get("random_state", 42)
     )
+    if model_config["library"] == "xgboost":
+        default_config["model_params"]["verbosity"] = 0
+    elif model_config["library"] == "lightgbm":
+        default_config["model_params"]["verbosity"] = -1
+    elif model_config["library"] == "catboost":
+        default_config["model_params"]["verbose"] = False
+        default_config["model_params"]["allow_writing_files"] = False
+    else:
+        pass
     if return_default_config:
         return default_config
     final_config = {

@@ -24,7 +24,7 @@ logger.info("prepare toy data module")
 data_module = Toy_Data_Module()
 
 tracking_uri = project_config["mlflow"]["tracking_uri"]
-experiment_name = "handwriten-digit-recognition"
+experiment_name = project_config["mlflow"]["experiment_name"]
 
 class Test_hp_tuning(unittest.TestCase):
     def test_hp_tuning(self):

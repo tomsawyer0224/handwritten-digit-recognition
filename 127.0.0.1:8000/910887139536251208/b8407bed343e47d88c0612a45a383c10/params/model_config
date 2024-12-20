@@ -1,1 +1,0 @@
-{'library': 'xgboost', 'model_class': 'XGBClassifier', 'model_params': {'random_state': 40}}

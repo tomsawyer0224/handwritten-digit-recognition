@@ -1,1 +1,0 @@
-{'library': 'xgboost', 'model_class': 'XGBClassifier', 'model_params': {'random_state': 40, 'n_estimators': 17, 'booster': 'gblinear', 'learning_rate': 0.1250717420612031, 'early_stopping_rounds': 5, 'verbosity': 0, 'n_jobs': 2}}
