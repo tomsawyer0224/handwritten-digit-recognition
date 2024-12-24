@@ -50,7 +50,7 @@ class HyperParamTuningPipeline:
     def run_pipeline(self):
         # tuning
         more_itertools.consume((tuner.tune() for tuner in self.tuners))
-        # find the best
+        # find the best model
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f'tags."candidate" = "good"',
