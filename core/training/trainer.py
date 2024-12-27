@@ -134,5 +134,6 @@ class Trainer:
                 artifact_path="model",
                 python_model=clf,
                 signature=signature,
-                input_example=input_example
+                input_example=input_example,
+                registered_model_name="handwritten-digit-recognition-model"
             )
