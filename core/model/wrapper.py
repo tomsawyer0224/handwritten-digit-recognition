@@ -21,8 +21,8 @@ class Classifier(mlflow.pyfunc.PythonModel):
 			target: Union[np.ndarray, pd.Series]
 		) -> float:
 		return self.model.score(data, target)
-	def load_context(self, context):
-		pass
+	# def load_context(self, context):
+	# 	pass
 	def predict(self, context, model_input, params=None):
 		y_pred = self.model.predict(model_input)
 		y_pred = id2name(y_pred)
