@@ -31,4 +31,6 @@ class Classifier(mlflow.pyfunc.PythonModel):
 		prediction = self.model.predict(data)
 		prediction = id2name(prediction)
 		return prediction
+
+
 		

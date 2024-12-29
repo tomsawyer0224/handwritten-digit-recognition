@@ -135,5 +135,6 @@ class Trainer:
                 python_model=clf,
                 signature=signature,
                 input_example=input_example,
-                registered_model_name="handwritten-digit-recognition-model"
+                #infer_code_paths=True,
+                #registered_model_name="handwritten-digit-recognition-model"
             )
