@@ -8,7 +8,7 @@ import numpy as np
 import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
-from core import MLflowModel
+#from core import MLflowModel
 from utils import (
     visualize_image,
     visualize_confusion_matrix,
@@ -133,8 +133,8 @@ class Trainer:
             # log model
             mlflow.pyfunc.log_model(
                 artifact_path="model",
-                #python_model=clf,
-                python_model=MLflowModel(clf.model),
+                python_model=clf,
+                #python_model=MLflowModel(clf),
                 signature=signature,
                 input_example=input_example,
                 infer_code_paths=True,

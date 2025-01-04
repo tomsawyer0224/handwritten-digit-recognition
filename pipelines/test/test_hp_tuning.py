@@ -18,10 +18,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 project_config = load_config("config/project_config_v2.yaml")
 
-#logger.info("prepare digit data module")
-#data_module = Digit_Data_Module()
-logger.info("prepare toy data module")
-data_module = Toy_Data_Module()
+logger.info("prepare digit data module")
+data_module = Digit_Data_Module()
+#logger.info("prepare toy data module")
+#data_module = Toy_Data_Module()
 
 tracking_uri = project_config["mlflow"]["tracking_uri"]
 experiment_name = project_config["mlflow"]["experiment_name"]
