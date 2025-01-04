@@ -135,7 +135,7 @@ class Trainer:
                 artifact_path="model",
                 python_model=clf,
                 #python_model=MLflowModel(clf),
-                signature=signature,
+                #signature=signature,
                 input_example=input_example,
                 infer_code_paths=True,
                 #registered_model_name="handwritten-digit-recognition-model"
