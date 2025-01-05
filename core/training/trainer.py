@@ -39,10 +39,10 @@ class Trainer:
             return_default_config=False
         )
         clf = Classifier(model_config=model_config)
-        signature = infer_signature(
-            model_input=val_dataset["data"][:2],
-            model_output=val_dataset["target"][:2]
-        )
+        # signature = infer_signature(
+        #     model_input=val_dataset["data"][:2],
+        #     model_output=val_dataset["target"][:2]
+        # )
         input_example = val_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
@@ -131,12 +131,17 @@ class Trainer:
             mlflow.log_param("model_config", model_config)
             
             # log model
+            signature = infer_signature(
+                model_input=val_dataset["data"][:2],
+                model_output=clf.get_prediction(val_dataset["data"][:2])
+            )
             mlflow.pyfunc.log_model(
                 artifact_path="model",
                 python_model=clf,
                 #python_model=MLflowModel(clf),
-                #signature=signature,
+                signature=signature,
                 input_example=input_example,
                 infer_code_paths=True,
+                pip_requirements="./requirements.txt"
                 #registered_model_name="handwritten-digit-recognition-model"
             )

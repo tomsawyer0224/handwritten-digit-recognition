@@ -24,10 +24,12 @@ class Classifier(mlflow.pyfunc.PythonModel):
 		return self.model.score(data, target)
 	# def load_context(self, context):
 	# 	pass
+	# def predict(self, context, model_input, params=None):
+	# 	y_pred = self.model.predict(model_input)
+	# 	y_pred = id2name(y_pred)
+	# 	return y_pred
 	def predict(self, context, model_input, params=None):
-		y_pred = self.model.predict(model_input)
-		y_pred = id2name(y_pred)
-		return y_pred
+		return self.get_prediction(model_input)
 	def get_prediction(self, data: Union[np.ndarray, pd.DataFrame]):
 		prediction = self.model.predict(data)
 		prediction = id2name(prediction)
