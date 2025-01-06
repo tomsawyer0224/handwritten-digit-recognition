@@ -1,3 +1,4 @@
+import mlflow.artifacts
 from mlflow.models import infer_signature
 import mlflow
 #from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
@@ -30,6 +31,7 @@ class Trainer:
         self.data_module = data_module
         self.experiment_id = experiment_id
         self.run_name = run_name
+        self.model_uri = None
     def train(self):
         train_dataset = self.data_module.train_dataset
         val_dataset = self.data_module.val_dataset
@@ -135,7 +137,7 @@ class Trainer:
                 model_input=val_dataset["data"][:2],
                 model_output=clf.get_prediction(val_dataset["data"][:2])
             )
-            mlflow.pyfunc.log_model(
+            model_info = mlflow.pyfunc.log_model(
                 artifact_path="model",
                 python_model=clf,
                 #python_model=MLflowModel(clf),
@@ -145,3 +147,11 @@ class Trainer:
                 pip_requirements="./requirements.txt"
                 #registered_model_name="handwritten-digit-recognition-model"
             )
+            self.model_uri = model_info.model_uri
+    def get_model_uri(self):
+        return self.model_uri
+    def get_payload(self):
+        #https://stackoverflow.com/questions/68718719/how-can-i-retrive-the-model-pkl-in-the-experiment-in-databricks
+        tmp_path = mlflow.artifacts.download_artifacts(
+
+        )
