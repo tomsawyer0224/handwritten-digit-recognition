@@ -2,6 +2,8 @@ import logging
 from sklearn.utils import Bunch
 from sklearn.model_selection import train_test_split
 
+from utils import name2id
+
 logger = logging.getLogger(__name__)
 
 def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
@@ -18,6 +20,7 @@ def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
         #dataset["data"] = (dataset["data"]-127.5)/127.5
         logger.info("rescaled the dataset to [0.0, 1.0]")
         #logger.info(f"{dataset["data"].min().min()=}, {dataset["data"].max().max()=}")
+    dataset["target"] = name2id(dataset["target"])
     train_data, test_data, train_target, test_target = train_test_split(
         dataset["data"],
         dataset["target"],

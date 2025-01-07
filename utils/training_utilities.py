@@ -29,9 +29,11 @@ def get_fit_config(classifier, val_data, val_target):
     return fit_config
 def prepare_training_data(train_dataset, val_dataset):
     train_data = train_dataset["data"]
-    train_target = name2id(train_dataset["target"])
+    # train_target = name2id(train_dataset["target"])
+    train_target = train_dataset["target"]
     val_data = val_dataset["data"]
-    val_target = name2id(val_dataset["target"])
+    # val_target = name2id(val_dataset["target"])
+    val_target = val_dataset["target"]
     return train_data, train_target, val_data, val_target
 def prepare_model_config(
         model_config: Dict[str, Any],

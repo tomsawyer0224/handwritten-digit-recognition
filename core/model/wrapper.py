@@ -32,7 +32,7 @@ class Classifier(mlflow.pyfunc.PythonModel):
 		return self.get_prediction(model_input)
 	def get_prediction(self, data: Union[np.ndarray, pd.DataFrame]):
 		prediction = self.model.predict(data)
-		prediction = id2name(prediction)
+		#prediction = id2name(prediction)
 		return prediction
 # class MLflowModel(mlflow.pyfunc.PythonModel):
 # 	def __init__(self, classifier):

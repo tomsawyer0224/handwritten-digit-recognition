@@ -149,7 +149,7 @@ class Trainer:
                 artifact_path="model",
                 python_model=clf,
                 #python_model=MLflowModel(clf),
-                signature=signature,
+                #signature=signature,
                 input_example=input_example,
                 infer_code_paths=True,
                 pip_requirements="./requirements.txt"
@@ -171,7 +171,7 @@ class Trainer:
         test_preds = loaded_model.predict(test_dataset["data"][:10])
         print(f"predictions  = {test_preds}")
         #ground_truth = f"[{' '.join('\'' + i + '\'' for i in test_dataset["target"][:10])}]"
-        ground_truth = list(test_dataset["target"][:10])
+        ground_truth = np.array(test_dataset["target"][:10])
         print(f"ground truth = {ground_truth}")
 
     
