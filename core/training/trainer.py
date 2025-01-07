@@ -1,9 +1,11 @@
 import mlflow.artifacts
-from mlflow.models import infer_signature
+import mlflow.artifacts
+from mlflow.models import infer_signature, validate_serving_input
 import mlflow
 #from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
 from typing import Dict, Any, Callable
 from sklearn.utils import Bunch
+import json
 #import logging
 import numpy as np
 import lightgbm as lbg
@@ -31,7 +33,13 @@ class Trainer:
         self.data_module = data_module
         self.experiment_id = experiment_id
         self.run_name = run_name
-        self.model_uri = None
+        self.run_id = None
+    @property
+    def model_uri(self):
+        return f"runs:/{self.run_id}/model"
+    @property
+    def artifact_uri(self):
+        return f"mlflow-artifacts:/{self.experiment_id}/{self.run_id}/artifacts/model"
     def train(self):
         train_dataset = self.data_module.train_dataset
         val_dataset = self.data_module.val_dataset
@@ -57,7 +65,7 @@ class Trainer:
                 experiment_id=self.experiment_id, 
                 run_name=self.run_name, 
                 tags={"candidate": "best"}
-            ):
+            ) as best_run:
             # visualize training images
             train_image = visualize_image(
                 dataset=train_dataset,
@@ -147,11 +155,23 @@ class Trainer:
                 pip_requirements="./requirements.txt"
                 #registered_model_name="handwritten-digit-recognition-model"
             )
-            self.model_uri = model_info.model_uri
-    def get_model_uri(self):
-        return self.model_uri
-    def get_payload(self):
-        #https://stackoverflow.com/questions/68718719/how-can-i-retrive-the-model-pkl-in-the-experiment-in-databricks
-        tmp_path = mlflow.artifacts.download_artifacts(
-
+        self.run_id = best_run.info.run_id
+    def test(self):
+        print("validate serving input")
+        serving_input_example = mlflow.artifacts.load_dict(
+            f"{self.artifact_uri}/serving_input_example.json"
         )
+        serving_payload = json.dumps(serving_input_example)
+        val_preds = validate_serving_input(self.model_uri, serving_payload)
+        print(f"val_preds = {val_preds}")
+        print("-"*30)
+        print("inference")
+        test_dataset = self.data_module.test_dataset
+        loaded_model = mlflow.pyfunc.load_model(self.model_uri)
+        test_preds = loaded_model.predict(test_dataset["data"][:10])
+        print(f"predictions  = {test_preds}")
+        #ground_truth = f"[{' '.join('\'' + i + '\'' for i in test_dataset["target"][:10])}]"
+        ground_truth = list(test_dataset["target"][:10])
+        print(f"ground truth = {ground_truth}")
+
+    

@@ -67,6 +67,7 @@ class HyperParamTuningPipeline:
             run_name="best_model"
         )
         trainer.train()
+        trainer.test()
 
 
     
