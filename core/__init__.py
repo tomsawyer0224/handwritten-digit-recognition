@@ -1,5 +1,5 @@
-from core.data.data_module import Digit_Data_Module, Toy_Data_Module
-from core.model.wrapper import Classifier
+from .data.data_module import Digit_Data_Module, Toy_Data_Module
+from .model.wrapper import Classifier
 #from core.model.wrapper import MLflowModel
-from core.training.tuner import Tuner
-from core.training.trainer import Trainer
+from .training.tuner import Tuner
+from .training.trainer import Trainer
