@@ -11,7 +11,7 @@ import numpy as np
 import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
-#from core import MLflowModel
+
 from utils import (
     visualize_image,
     visualize_confusion_matrix,
@@ -145,19 +145,15 @@ class Trainer:
                 model_input=val_dataset["data"][:2],
                 model_output=clf.get_prediction(val_dataset["data"][:2])
             )
-            model_info = mlflow.pyfunc.log_model(
+            #model_info = mlflow.pyfunc.log_model(
+            mlflow.pyfunc.log_model(
                 artifact_path="model",
                 python_model=clf,
-                #python_model=MLflowModel(clf),
                 signature=signature,
                 input_example=input_example,
                 #infer_code_paths=True,
-                code_paths=[
-                    "core",
-                    "utils"
-                ],
+                code_paths=["core","utils"],
                 pip_requirements="./requirements.txt"
-                #registered_model_name="handwritten-digit-recognition-model"
             )
         self.run_id = best_run.info.run_id
     def test(self):
@@ -174,7 +170,6 @@ class Trainer:
         loaded_model = mlflow.pyfunc.load_model(self.model_uri)
         test_preds = loaded_model.predict(test_dataset["data"][:10])
         print(f"predictions  = {test_preds}")
-        #ground_truth = f"[{' '.join('\'' + i + '\'' for i in test_dataset["target"][:10])}]"
         ground_truth = np.array(test_dataset["target"][:10])
         print(f"ground truth = {ground_truth}")
 

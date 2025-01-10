@@ -1,7 +1,7 @@
 import mlflow
 
 mlflow.set_tracking_uri(uri="http://127.0.0.1:8000")
-model_uri = "runs:/2a85707d9c9a4314a90af800085eef16/model"
+model_uri = "runs:/578413b18f414fdcb3328a452c30c326/model"
 mlflow.models.build_docker(
     model_uri=model_uri,
     name="handwritten-digit-recognition-model",

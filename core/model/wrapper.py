@@ -29,7 +29,8 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	# 	y_pred = id2name(y_pred)
 	# 	return y_pred
 	def predict(self, context, model_input, params=None):
-		return self.get_prediction(model_input)
+		prediction = self.get_prediction(model_input)
+		return id2name(prediction)
 	def get_prediction(self, data: Union[np.ndarray, pd.DataFrame]):
 		prediction = self.model.predict(data)
 		#prediction = id2name(prediction)
