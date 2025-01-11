@@ -1,21 +1,27 @@
-import argparse
 import logging
-import mlflow
-from mlflow import MlflowClient
 import click
 import yaml
+import os
+from urllib.parse import urlparse
 
 @click.group()
-def cli():
+def run():
     pass
 
-#@cli.command()
 @click.command()
-@click.argument("a", type=click.FLOAT)
-@click.argument("b", type=click.FLOAT)
-def add(a, b):
-    click.echo(a + b)
+@click.option("--config_file", type=click.File("r"))
+def init(config_file):
+    os.makedirs("./scripts", exist_ok=True)
 
-cli.add_command(add)
+    # create
+    config = yaml.safe_load(config_file)
+    tracking_uri = urlparse(config["mlflow"]["tracking_uri"])
+    host_name = tracking_uri.hostname
+    port = tracking_uri.port
+    print(f"{host_name=}")
+    print(f"{port=}")
+
+
+run.add_command(init)
 if __name__ == "__main__":
-    cli()
+    run()

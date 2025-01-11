@@ -18,7 +18,8 @@ from utils import (
     visualize_classification_report,
     prepare_training_data,
     get_fit_config,
-    prepare_model_config
+    prepare_model_config,
+    id2name
 )
 
 class Trainer:
@@ -170,7 +171,7 @@ class Trainer:
         loaded_model = mlflow.pyfunc.load_model(self.model_uri)
         test_preds = loaded_model.predict(test_dataset["data"][:10])
         print(f"predictions  = {test_preds}")
-        ground_truth = np.array(test_dataset["target"][:10])
+        ground_truth = np.array(id2name(test_dataset["target"][:10]))
         print(f"ground truth = {ground_truth}")
 
     
