@@ -35,7 +35,7 @@ def init(config_file):
     # script to start tracking server
     config = yaml.safe_load(config_file)
     tracking_uri = config["mlflow"]["tracking_uri"]
-    parsed_tracking_uri = urlparse(config["mlflow"]["tracking_uri"])
+    parsed_tracking_uri = urlparse(tracking_uri)
     host_name = parsed_tracking_uri.hostname
     port = parsed_tracking_uri.port
     server_cmds = [
