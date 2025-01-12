@@ -1,0 +1,1 @@
+docker run -p 5001:8080 handwritten-digit-recognition-model

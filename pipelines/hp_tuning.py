@@ -1,4 +1,3 @@
-import argparse
 import logging
 import mlflow
 from mlflow import MlflowClient
@@ -12,12 +11,12 @@ from core import (
 )
 from utils import get_or_create_experiment
 
-logging.basicConfig(
-        format="{asctime}::{levelname}::{name}::{message}",
-        style="{",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.INFO
-    )
+# logging.basicConfig(
+#         format="{asctime}::{levelname}::{name}::{message}",
+#         style="{",
+#         datefmt="%Y-%m-%d %H:%M:%S",
+#         level=logging.INFO
+#     )
 logger = logging.getLogger(__name__)
 class HyperParamTuningPipeline:
     def __init__(
@@ -51,15 +50,28 @@ class HyperParamTuningPipeline:
         # tuning
         more_itertools.consume((tuner.tune() for tuner in self.tuners))
         # find the best model
-        runs = mlflow.search_runs(
+        tuning_runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f'tags."candidate" = "good"',
             output_format="list",
             order_by=["metrics.accuracy DESC"]
         )
-        best_run = runs[0]
-        best_model_config = yaml.safe_load(best_run.data.params["model_config"])
-        # re-train
+        best_tuning_run = tuning_runs[0]
+        best_model_config = yaml.safe_load(best_tuning_run.data.params["model_config"])
+        best_tuning_accuracy = best_tuning_run.data.metrics["accuracy"]
+
+        # re-train if needed
+        best_run = mlflow.search_runs(
+            experiment_ids=[self.experiment_id],
+            filter_string=f'tags."candidate" = "best"',
+            output_format="list",
+            order_by=["metrics.accuracy DESC"]
+        )
+        #retrain = True
+        if len(best_run) > 0:
+            if best_run[0].data.metrics["val_accuracy"] >= best_tuning_accuracy:
+                #retrain = False
+                return
         trainer = Trainer(
             model_config=best_model_config,
             data_module=self.data_module,
