@@ -21,16 +21,16 @@ def run():
 @click.command()
 @click.option("-cf", "--config_file", type=click.File("r"))
 def init(config_file):
-    os.makedirs("./scripts", exist_ok=True)
-    # script to create virtual environment
-    venv_cmds = [
-        "virtualenv .venv",
-        "source .venv/bin/activate",
-        "pip install -U pip",
-        "pip install -r requirements.txt"
-    ]
-    with open("./scripts/create_virtual_environment.sh", "w") as venv_scr:
-        venv_scr.write("\n".join(venv_cmds))
+    # os.makedirs("./scripts", exist_ok=True)
+    # # script to create virtual environment
+    # venv_cmds = [
+    #     "virtualenv .venv",
+    #     "source .venv/bin/activate",
+    #     "pip install -U pip",
+    #     "pip install -r requirements.txt"
+    # ]
+    # with open("./scripts/create_virtual_environment.sh", "w") as venv_scr:
+    #     venv_scr.write("\n".join(venv_cmds))
 
     # script to start tracking server
     config = yaml.safe_load(config_file)
