@@ -174,4 +174,3 @@ mlartifacts
 catboost_info
 .project_info.yaml
 ./project_info.yaml
-./info.yaml
