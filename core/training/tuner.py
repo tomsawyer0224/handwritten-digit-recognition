@@ -76,14 +76,20 @@ class Tuner:
             clf.fit(train_data, train_target, **fit_config)
 
             # validate
-            acc = clf.score(val_data, val_target)
+            val_acc = clf.score(val_data, val_target)
             self.mlflow_client.log_metric(
                 run_id=child_run.info.run_id,
-                key="accuracy",
-                value=acc
+                key="val_accuracy",
+                value=val_acc
             )
             
-            return acc
+            train_acc = clf.score(train_data, train_target)
+            self.mlflow_client.log_metric(
+                run_id=child_run.info.run_id,
+                key="train_accuracy",
+                value=train_acc
+            )
+            return val_acc
         return objective
     def _train_default_model(self):
         default_run_name = self.model_config["model_class"] + "_default_test"
@@ -117,16 +123,21 @@ class Tuner:
                 classifier=clf, val_data=val_data, val_target=val_target
             )
             clf.fit(data=train_data, target=train_target, **fit_config)
-            acc = clf.score(data=val_data, target=val_target)
-            
+            val_acc = clf.score(data=val_data, target=val_target)
             self.mlflow_client.log_metric(
                 run_id=default_run.info.run_id,
-                key="accuracy",
-                value=acc
+                key="val_accuracy",
+                value=val_acc
             )
 
+            train_acc = clf.score(data=train_data, target=train_target)
+            self.mlflow_client.log_metric(
+                run_id=default_run.info.run_id,
+                key="train_accuracy",
+                value=train_acc
+            )
     def tune(self):
-        logger.info(f"start hyper prameters tuning on {self.model_config["model_class"]}")
+        logger.info(f"start hyperprameter tuning on {self.model_config["model_class"]}")
         self._train_default_model()
         parent_run_id = self.parent_run.info.run_id
         objective = self.get_objective(parent_run_id)
@@ -147,7 +158,7 @@ class Tuner:
         best_value = study.best_value
         self.mlflow_client.log_metric(
             run_id=parent_run_id,
-            key="accuracy",
+            key="val_accuracy",
             value=best_value
         )
 

@@ -16,7 +16,7 @@ logging.basicConfig(
         level=logging.INFO
     )
 logger = logging.getLogger(__name__)
-project_config = load_config("config/project_config_v2.yaml")
+project_config = load_config("config/project_config.yaml")
 
 logger.info("prepare digit data module")
 data_module = Digit_Data_Module()

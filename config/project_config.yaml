@@ -2,14 +2,14 @@ mlflow:
   tracking_uri: "http://127.0.0.1:8000"
   experiment_name: "handwriten-digit-recognition"
 optuna:
-  n_trials: 3
-  n_jobs: 2
+  n_trials: 2
+  n_jobs: -1
 models:
   model_1:
     library: "sklearn"
     model_class: "RandomForestClassifier"
     model_params:
-      n_jobs: 2
+      n_jobs: -1
       n_estimators:
         param_type: "int"
         param_range: [50, 100]
@@ -30,16 +30,13 @@ models:
     model_params:
       n_estimators:
         param_type: "int"
-        param_range: [10,20]
-      booster:
-        param_type: "categorical"
-        param_range: ["gbtree", "gblinear"]
+        param_range: [80,120]
       learning_rate:
         param_type: "float"
         param_range: [0.08,0.15]
       early_stopping_rounds: 5
       verbosity: 0
-      n_jobs: 2
+      n_jobs: -1
       random_state: 40
   model_3:
     library: "lightgbm"
@@ -57,7 +54,7 @@ models:
       max_depth: 3
       objective: "multiclass"
       verbosity: -1
-      n_jobs: 2
+      n_jobs: -1
       random_state: 50
   model_4:
     library: "catboost"
@@ -66,7 +63,7 @@ models:
       learning_rate:
         param_type: "float"
         param_range: [0.08,0.15]
-      iterations: 5
+      iterations: 2
       loss_function: "MultiClass"
       early_stopping_rounds: 2
       verbose: False

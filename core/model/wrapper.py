@@ -30,12 +30,13 @@ class Classifier(mlflow.pyfunc.PythonModel):
 	# 	return y_pred
 	def predict(self, context, model_input, params=None):
 		prediction = self.get_prediction(model_input)
-		return id2name(prediction)
+		return prediction
+		#return id2name(prediction)
 	def get_prediction(self, data: Union[np.ndarray, pd.DataFrame]):
 		prediction = self.model.predict(data)
 		if prediction.ndim == 2:
 			prediction = prediction.squeeze()
-		return prediction
+		return id2name(prediction)
 # class MLflowModel(mlflow.pyfunc.PythonModel):
 # 	def __init__(self, classifier):
 # 		self.classifier = classifier

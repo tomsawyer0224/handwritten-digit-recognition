@@ -172,4 +172,4 @@ mlartifacts
 /digit_data
 
 catboost_info
-scripts/run_docker.sh
+scripts/

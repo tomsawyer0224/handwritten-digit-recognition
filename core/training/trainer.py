@@ -54,7 +54,7 @@ class Trainer:
         #     model_input=val_dataset["data"][:2],
         #     model_output=val_dataset["target"][:2]
         # )
-        input_example = val_dataset["data"][:2]
+        # input_example = val_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f"attributes.run_name = '{self.run_name}'",
@@ -119,7 +119,7 @@ class Trainer:
 
             # confusion matrix
             cm = visualize_confusion_matrix(
-                y_true=val_dataset["target"],
+                y_true=id2name(val_dataset["target"]),
                 y_pred=val_predictions,
                 name="confusion matrix"
             )
@@ -130,7 +130,7 @@ class Trainer:
 
             # classification report
             cls_rpt = visualize_classification_report(
-                y_true=val_dataset["target"],
+                y_true=id2name(val_dataset["target"]),
                 y_pred=val_predictions
             )
             mlflow.log_text(
@@ -142,9 +142,10 @@ class Trainer:
             mlflow.log_param("model_config", model_config)
             
             # log model
+            input_example = val_dataset["data"][:2]
             signature = infer_signature(
-                model_input=val_dataset["data"][:2],
-                model_output=clf.get_prediction(val_dataset["data"][:2])
+                model_input=input_example,
+                model_output=clf.get_prediction(input_example)
             )
             #model_info = mlflow.pyfunc.log_model(
             mlflow.pyfunc.log_model(
@@ -153,7 +154,7 @@ class Trainer:
                 signature=signature,
                 input_example=input_example,
                 #infer_code_paths=True,
-                code_paths=["core","utils"],
+                code_paths=["core", "utils"],
                 pip_requirements="./requirements.txt"
             )
         self.run_id = best_run.info.run_id

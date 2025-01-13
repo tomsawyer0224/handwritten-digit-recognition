@@ -58,7 +58,7 @@ class HyperParamTuningPipeline:
         )
         best_tuning_run = tuning_runs[0]
         best_model_config = yaml.safe_load(best_tuning_run.data.params["model_config"])
-        best_tuning_accuracy = best_tuning_run.data.metrics["accuracy"]
+        best_tuning_accuracy = best_tuning_run.data.metrics["val_accuracy"]
 
         # re-train if needed
         best_run = mlflow.search_runs(

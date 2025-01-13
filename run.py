@@ -3,6 +3,7 @@ import click
 import yaml
 import os
 from urllib.parse import urlparse
+import mlflow
 
 from core import Digit_Data_Module, Toy_Data_Module
 from pipelines import HyperParamTuningPipeline, DeploymentPipeline
@@ -20,18 +21,9 @@ def run():
 
 @click.command()
 @click.option("-cf", "--config_file", type=click.File("r"))
-def init(config_file):
-    # os.makedirs("./scripts", exist_ok=True)
-    # # script to create virtual environment
-    # venv_cmds = [
-    #     "virtualenv .venv",
-    #     "source .venv/bin/activate",
-    #     "pip install -U pip",
-    #     "pip install -r requirements.txt"
-    # ]
-    # with open("./scripts/create_virtual_environment.sh", "w") as venv_scr:
-    #     venv_scr.write("\n".join(venv_cmds))
-
+def prepare(config_file):
+    os.makedirs("./scripts", exist_ok=True)
+    
     # script to start tracking server
     config = yaml.safe_load(config_file)
     tracking_uri = config["mlflow"]["tracking_uri"]
@@ -85,7 +77,7 @@ def deploy(model_uri):
     deployment_ppl = DeploymentPipeline(model_uri=model_uri)
     deployment_ppl.run_pipeline()
 
-run.add_command(init)
+run.add_command(prepare)
 run.add_command(tune)
 run.add_command(deploy)
 
