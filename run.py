@@ -38,13 +38,19 @@ def init(config_file):
     parsed_tracking_uri = urlparse(tracking_uri)
     host_name = parsed_tracking_uri.hostname
     port = parsed_tracking_uri.port
-    server_cmds = [
+    server_start_cmds = [
         "source .venv/bin/activate",
         f"mlflow server --host {host_name} --port {port}"
     ]
-    with open("./scripts/start_tracking_server.sh", "w") as ts_scr:
-        ts_scr.write("\n".join(server_cmds))
+    with open("./scripts/start_tracking_server.sh", "w") as ss_scr:
+        ss_scr.write("\n".join(server_start_cmds))
 
+    # script to stop tracking server
+    with open("./scripts/stop_tracking_server.sh", "w") as sstp_scr:
+        sstp_scr.write(
+            "ps aux | grep 'mlflow' | grep -v 'grep' | awk '{print $2}' | xargs kill -9"
+        )
+    
     # script to run docker
     with open("./scripts/run_docker.sh", "w") as rd_scr:
         rd_scr.write("docker run -p 5001:8080 handwritten-digit-recognition-model")
