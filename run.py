@@ -20,7 +20,7 @@ def run():
     pass
 
 @click.command()
-@click.option("-cf", "--config_file", type=click.File("r"))
+@click.option("-cf", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
 def prepare(config_file):
     os.makedirs("./scripts", exist_ok=True)
     
@@ -47,6 +47,11 @@ def prepare(config_file):
     with open("./scripts/run_docker.sh", "w") as rd_scr:
         rd_scr.write("docker run -p 5001:8080 handwritten-digit-recognition-model")
     
+    # script to stop docker container
+    with open("./scripts/stop_docker_container.sh", "w") as sdc_scr:
+        sdc_scr.write(
+            'docker ps --filter "ancestor=handwritten-digit-recognition-model" -q | xargs docker stop'
+        )
     # script to set the tracking uri
     tu_cmds = [
         "source .venv/bin/activate",
@@ -60,8 +65,8 @@ def prepare(config_file):
 @click.option("-cf", "--config_file", type=click.File("r"))
 def tune(config_file):
     project_config = yaml.safe_load(config_file)
-    #data_module = Digit_Data_Module()
-    data_module = Toy_Data_Module()
+    data_module = Digit_Data_Module()
+    # data_module = Toy_Data_Module()
     hp_tuning_ppl = HyperParamTuningPipeline(
             model_configs=project_config["models"],
             tuning_config=project_config["optuna"],
@@ -72,7 +77,7 @@ def tune(config_file):
     hp_tuning_ppl.run_pipeline()
 
 @click.command()
-@click.option("-m", "--model_uri", type=click.STRING)
+@click.option("-m", "--model_uri", type=click.STRING, default=None)
 def deploy(model_uri):
     deployment_ppl = DeploymentPipeline(model_uri=model_uri)
     deployment_ppl.run_pipeline()

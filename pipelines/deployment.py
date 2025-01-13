@@ -1,6 +1,6 @@
 import mlflow
 import logging
-
+import yaml
 # logging.basicConfig(
 #         format="{asctime}::{levelname}::{name}::{message}",
 #         style="{",
@@ -9,8 +9,11 @@ import logging
 #     )
 logger = logging.getLogger(__name__)
 class DeploymentPipeline:
-    def __init__(self, model_uri: str) -> None:
-        self.model_uri = model_uri
+    def __init__(self, model_uri: str = None) -> None:
+        with open("./project_result.yaml", "r") as f:
+            project_result = yaml.safe_load(f)
+        self.model_uri = model_uri if model_uri is not None else project_result["model_uri"]
+        mlflow.set_tracking_uri = project_result["tracking_uri"]
     def run_pipeline(self):
         mlflow.models.build_docker(
             model_uri=self.model_uri,

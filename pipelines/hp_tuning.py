@@ -28,6 +28,7 @@ class HyperParamTuningPipeline:
             experiment_name: str = "experiment"
         ) -> None:
         mlflow_client = MlflowClient(tracking_uri=tracking_uri)
+        self.tracking_uri = tracking_uri
         mlflow.set_tracking_uri(uri=tracking_uri)
         #logger.info(f"create an experiment with name {experiment_name}")
         self.experiment_id = get_or_create_experiment(
@@ -80,6 +81,14 @@ class HyperParamTuningPipeline:
         )
         trainer.train()
         trainer.test()
+        
+        project_result = dict(
+            experiment_id = self.experiment_id,
+            tracking_uri = self.tracking_uri,
+            model_uri = trainer.model_uri
+        )
+        with open("./project_result.yaml", "w") as f:
+            yaml.dump(project_result, f)
 
 
     

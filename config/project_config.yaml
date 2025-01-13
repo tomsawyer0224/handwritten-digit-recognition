@@ -24,47 +24,47 @@ models:
         param_range: [0.0, 0.5]
       max_features: "sqrt"
       random_state: 30
-  model_2:
-    library: "xgboost"
-    model_class: "XGBClassifier"
-    model_params:
-      n_estimators:
-        param_type: "int"
-        param_range: [80,120]
-      learning_rate:
-        param_type: "float"
-        param_range: [0.08,0.15]
-      early_stopping_rounds: 5
-      verbosity: 0
-      n_jobs: -1
-      random_state: 40
-  model_3:
-    library: "lightgbm"
-    model_class: "LGBMClassifier"
-    model_params:
-      n_estimators:
-        param_type: "int"
-        param_range: [10,20]
-      boosting_type:
-        param_type: "categorical"
-        param_range: ["gbdt", "dart"]
-      learning_rate:
-        param_type: "float"
-        param_range: [0.08,0.15]
-      max_depth: 3
-      objective: "multiclass"
-      verbosity: -1
-      n_jobs: -1
-      random_state: 50
-  model_4:
-    library: "catboost"
-    model_class: "CatBoostClassifier"
-    model_params:
-      learning_rate:
-        param_type: "float"
-        param_range: [0.08,0.15]
-      iterations: 2
-      loss_function: "MultiClass"
-      early_stopping_rounds: 2
-      verbose: False
-      allow_writing_files: False
+  # model_2:
+  #   library: "xgboost"
+  #   model_class: "XGBClassifier"
+  #   model_params:
+  #     n_estimators:
+  #       param_type: "int"
+  #       param_range: [80,120]
+  #     learning_rate:
+  #       param_type: "float"
+  #       param_range: [0.08,0.15]
+  #     early_stopping_rounds: 5
+  #     verbosity: 0
+  #     n_jobs: -1
+  #     random_state: 40
+  # model_3:
+  #   library: "lightgbm"
+  #   model_class: "LGBMClassifier"
+  #   model_params:
+  #     n_estimators:
+  #       param_type: "int"
+  #       param_range: [10,20]
+  #     boosting_type:
+  #       param_type: "categorical"
+  #       param_range: ["gbdt", "dart"]
+  #     learning_rate:
+  #       param_type: "float"
+  #       param_range: [0.08,0.15]
+  #     max_depth: 3
+  #     objective: "multiclass"
+  #     verbosity: -1
+  #     n_jobs: -1
+  #     random_state: 50
+  # model_4:
+  #   library: "catboost"
+  #   model_class: "CatBoostClassifier"
+  #   model_params:
+  #     learning_rate:
+  #       param_type: "float"
+  #       param_range: [0.08,0.15]
+  #     iterations: 2
+  #     loss_function: "MultiClass"
+  #     early_stopping_rounds: 2
+  #     verbose: False
+  #     allow_writing_files: False
