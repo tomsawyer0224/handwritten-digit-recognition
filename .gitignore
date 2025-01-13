@@ -172,5 +172,4 @@ mlartifacts
 /digit_data
 
 catboost_info
-.project_info.yaml
-./project_info.yaml
+scripts/run_docker.sh
