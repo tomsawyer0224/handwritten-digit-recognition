@@ -173,4 +173,4 @@ mlartifacts
 
 catboost_info
 scripts/
-./project_result.yaml
+project_result.yaml

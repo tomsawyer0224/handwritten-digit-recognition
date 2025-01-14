@@ -47,7 +47,7 @@ class HyperParamTuningPipeline:
             experiment_ids=[self.experiment_id],
             filter_string=f'tags."candidate" = "good"',
             output_format="list",
-            order_by=["metrics.accuracy DESC"]
+            order_by=["metrics.val_accuracy DESC"]
         )
         best_tuning_run = tuning_runs[0]
         best_model_config = yaml.safe_load(best_tuning_run.data.params["model_config"])
