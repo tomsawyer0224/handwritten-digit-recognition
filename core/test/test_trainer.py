@@ -15,10 +15,10 @@ logging.basicConfig(
         level=logging.INFO
     )
 logger = logging.getLogger(__name__)
-sklearn_config = load_config("config/sklearn_training_config.yaml")
-xgboost_config = load_config("config/xgboost_training_config.yaml")
-lightgbm_config = load_config("config/lightgbm_training_config.yaml")
-catboost_config = load_config("config/catboost_training_config.yaml")
+sklearn_config = load_config("config/test/sklearn_training_config.yaml")
+xgboost_config = load_config("config/test/xgboost_training_config.yaml")
+lightgbm_config = load_config("config/test/lightgbm_training_config.yaml")
+catboost_config = load_config("config/test/catboost_training_config.yaml")
 
 #logger.info("prepare digit data module")
 #data_module = Digit_Data_Module()

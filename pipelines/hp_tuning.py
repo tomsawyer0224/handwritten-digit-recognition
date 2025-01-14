@@ -72,7 +72,7 @@ class HyperParamTuningPipeline:
             experiment_id=self.experiment_id,
             run_name="best_model"
         )
-        logger.info("trains and logs the best model")
+        logger.info("train and log the best model")
         trainer.train()
         #trainer.test()
         
@@ -81,7 +81,7 @@ class HyperParamTuningPipeline:
             tracking_uri = self.tracking_uri,
             model_uri = trainer.model_uri
         )
-        with open("./project_result.yaml", "w") as f:
+        with open("./.project_result.yaml", "w") as f:
             yaml.dump(project_result, f)
 
 

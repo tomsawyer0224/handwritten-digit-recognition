@@ -6,9 +6,9 @@ import os
 logger = logging.getLogger(__name__)
 class DeploymentPipeline:
     def __init__(self, model_uri: str = None) -> None:
-        if not os.path.isfile("./project_result.yaml"):
+        if not os.path.isfile("./.project_result.yaml"):
             raise Exception("It seems that the model has not been trained yet!")
-        with open("./project_result.yaml", "r") as f:
+        with open("./.project_result.yaml", "r") as f:
             project_result = yaml.safe_load(f)
         #logger.info(f"{project_result=}")
         self.model_uri = model_uri if model_uri is not None else project_result["model_uri"]
