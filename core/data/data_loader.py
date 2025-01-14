@@ -6,16 +6,16 @@ import logging
 logger = logging.getLogger(__name__)
 def load_dataset() -> Bunch:
     """
-    loads MNIST digit dataset from openml
+    This function will load MNIST digit dataset from openml
     """
     raw_dataset = fetch_openml(
         name="mnist_784",
         version=1,
         return_X_y=False,
         as_frame=True,
-        #data_home="./core/data/digit_data",
         data_home="./data"
     )
-    #raw_dataset["target"] = raw_dataset["target"].astype(int)
-    logger.info(f"loaded MNIST Digit Dataset with {len(raw_dataset["target"])} data points")
+    logger.info(
+        f"The MNIST Digit Dataset has been loaded with {len(raw_dataset["target"])} data points."
+    )
     return raw_dataset

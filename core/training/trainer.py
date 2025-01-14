@@ -2,13 +2,9 @@ import mlflow.artifacts
 import mlflow.artifacts
 from mlflow.models import infer_signature, validate_serving_input
 import mlflow
-#from mlflow.utils.mlflow_tags import MLFLOW_PARENT_RUN_ID
-from typing import Dict, Any, Callable
-from sklearn.utils import Bunch
+from typing import Dict, Any
 import json
-#import logging
 import numpy as np
-import lightgbm as lbg
 
 from core import Digit_Data_Module, Classifier
 
@@ -50,11 +46,6 @@ class Trainer:
             return_default_config=False
         )
         clf = Classifier(model_config=model_config)
-        # signature = infer_signature(
-        #     model_input=val_dataset["data"][:2],
-        #     model_output=val_dataset["target"][:2]
-        # )
-        # input_example = val_dataset["data"][:2]
         runs = mlflow.search_runs(
             experiment_ids=[self.experiment_id],
             filter_string=f"attributes.run_name = '{self.run_name}'",

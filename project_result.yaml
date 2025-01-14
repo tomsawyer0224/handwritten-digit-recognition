@@ -1,0 +1,3 @@
+experiment_id: '744563058702059123'
+model_uri: runs:/ca2009003fa8411984df5fca35774292/model
+tracking_uri: http://127.0.0.1:8000

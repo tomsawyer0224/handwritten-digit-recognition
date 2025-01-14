@@ -11,12 +11,6 @@ from core import (
 )
 from utils import get_or_create_experiment
 
-# logging.basicConfig(
-#         format="{asctime}::{levelname}::{name}::{message}",
-#         style="{",
-#         datefmt="%Y-%m-%d %H:%M:%S",
-#         level=logging.INFO
-#     )
 logger = logging.getLogger(__name__)
 class HyperParamTuningPipeline:
     def __init__(
@@ -30,12 +24,10 @@ class HyperParamTuningPipeline:
         mlflow_client = MlflowClient(tracking_uri=tracking_uri)
         self.tracking_uri = tracking_uri
         mlflow.set_tracking_uri(uri=tracking_uri)
-        #logger.info(f"create an experiment with name {experiment_name}")
         self.experiment_id = get_or_create_experiment(
             experiment_name=experiment_name,
             client=mlflow_client
         )
-        #logger.info(f"experiment {experiment_name} was created with id: {self.experiment_id}")
         self.data_module = data_module
         self.tuners = [
             Tuner(
@@ -72,6 +64,7 @@ class HyperParamTuningPipeline:
         if len(best_run) > 0:
             if best_run[0].data.metrics["val_accuracy"] >= best_tuning_accuracy:
                 #retrain = False
+                logger.info("can't find a better model")
                 return
         trainer = Trainer(
             model_config=best_model_config,
@@ -79,8 +72,9 @@ class HyperParamTuningPipeline:
             experiment_id=self.experiment_id,
             run_name="best_model"
         )
+        logger.info("trains and logs the best model")
         trainer.train()
-        trainer.test()
+        #trainer.test()
         
         project_result = dict(
             experiment_id = self.experiment_id,

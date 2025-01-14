@@ -9,12 +9,13 @@ from core import Digit_Data_Module, Toy_Data_Module
 from pipelines import HyperParamTuningPipeline, DeploymentPipeline
 
 logging.basicConfig(
-        format="{asctime}::{levelname}::{name}::{message}",
+        #format="{asctime}::{levelname}::{name}::{message}",
+        format="[{levelname}]::{message}",
         style="{",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
-
+#logger = logging.getLogger(__name__)
 @click.group()
 def run():
     pass
@@ -62,11 +63,13 @@ def prepare(config_file):
     click.echo("scripts are created in the 'scripts/' directory!")
 
 @click.command()
-@click.option("-cf", "--config_file", type=click.File("r"))
+@click.option("-cf", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
 def tune(config_file):
     project_config = yaml.safe_load(config_file)
+    click.echo("prepare dataset")
     data_module = Digit_Data_Module()
     # data_module = Toy_Data_Module()
+    click.echo("tune models")
     hp_tuning_ppl = HyperParamTuningPipeline(
             model_configs=project_config["models"],
             tuning_config=project_config["optuna"],

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
     """
-    splits a dataset into three datasets: train, val, test dataset
+    This function will split a dataset into three datasets: train, val, test dataset
     args:
         dataset: Bunch object with keys: data, target
         rescale: scales to [0.0, 1.0] range or not
@@ -17,9 +17,7 @@ def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
     """
     if rescale:
         dataset["data"] = dataset["data"]/255.0
-        #dataset["data"] = (dataset["data"]-127.5)/127.5
-        logger.info("rescaled the dataset to [0.0, 1.0]")
-        #logger.info(f"{dataset["data"].min().min()=}, {dataset["data"].max().max()=}")
+        #logger.info("rescaled the dataset to [0.0, 1.0]")
     dataset["target"] = name2id(dataset["target"])
     train_data, test_data, train_target, test_target = train_test_split(
         dataset["data"],
@@ -37,10 +35,10 @@ def split_dataset(dataset: Bunch, rescale: bool = True) -> Bunch:
     val_dataset = Bunch(data = val_data, target = val_target, size = len(val_target))
     test_dataset = Bunch(data = test_data, target = test_target, size = len(test_target))
     logger.info(
-        f"splitted the dataset into 3 datasets: "\
-        f"train dataset of size {train_dataset['size']}, "\
-        f"validation dataset of size {val_dataset['size']}, "\
-        f"test dataset of size {test_dataset['size']}"
+        f"The dataset is split into 3 datasets: "\
+        f"the train dataset of size {train_dataset['size']}, "\
+        f"the validation dataset of size {val_dataset['size']}, "\
+        f"the test dataset of size {test_dataset['size']}"
     )
     return Bunch(
         train_dataset = train_dataset,
