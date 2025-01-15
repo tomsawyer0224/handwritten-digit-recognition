@@ -1,9 +1,10 @@
-import yaml
+from sklearn.datasets import fetch_openml
 
-info = dict(model_uri = "runs:/abcd")
-with open("info.yaml", "w") as f:
-    yaml.dump(info, f)
-
-with open("info.yaml", "r") as f:
-    conf = yaml.safe_load(f)
-print(conf)
+raw_dataset = fetch_openml(
+        name="mnist_784",
+        version=1,
+        return_X_y=False,
+        as_frame=True,
+        data_home="./data"
+    )
+print(raw_dataset)
