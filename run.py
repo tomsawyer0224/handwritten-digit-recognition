@@ -60,7 +60,7 @@ def prepare(config_file):
     ]
     with open("./scripts/set_tracking_uri.sh", "w") as stu_scr:
         stu_scr.write("\n".join(tu_cmds))
-    click.echo("scripts are created in the 'scripts/' directory!")
+    #click.echo("scripts are created in the 'scripts/' directory!")
 
 @click.command()
 @click.option("-cf", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
