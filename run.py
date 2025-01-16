@@ -15,13 +15,13 @@ logging.basicConfig(
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
-#logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 @click.group()
 def run():
     pass
 
 @click.command()
-@click.option("-cf", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
+@click.option("-c", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
 def prepare(config_file):
     os.makedirs("./scripts", exist_ok=True)
     
@@ -63,13 +63,15 @@ def prepare(config_file):
     #click.echo("scripts are created in the 'scripts/' directory!")
 
 @click.command()
-@click.option("-cf", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
+@click.option("-c", "--config_file", type=click.File("r"), default="./config/project_config.yaml")
 def tune(config_file):
     project_config = yaml.safe_load(config_file)
-    click.echo("prepare dataset")
+    #click.echo("prepare dataset")
+    logger.info("prepare dataset")
     data_module = Digit_Data_Module()
     # data_module = Toy_Data_Module()
-    click.echo("tune models")
+    #click.echo("tune models")
+    logger.info("tune models")
     hp_tuning_ppl = HyperParamTuningPipeline(
             model_configs=project_config["models"],
             tuning_config=project_config["optuna"],
