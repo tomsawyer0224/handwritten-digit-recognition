@@ -24,8 +24,10 @@ source scripts/start_tracking_server.sh
 ```
 python run.py tune
 ```
-This procedure can be repeated until we get the best model.\
-5. To view the results, open address 'tracking_uri' (specified in config/project_config.yaml, for example: http://127.0.0.1:8000) in a web browser.\
+This procedure can be repeated until we get the best model.
+
+5. To view the results, open address 'tracking_uri' (specified in config/project_config.yaml, for example: http://127.0.0.1:8000) in a web browser.
+   
 6. After we've completed the tuning and training processes, run the below command in Terminal 1 to deploy the best mode to Docker:
 ```
 python run.py deploy
