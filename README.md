@@ -11,7 +11,7 @@ Build a model that can recognize the handwritten number.
 git clone https://github.com/tomsawyer0224/handwritten-digit-recognition.git
 cd handwritten-digit-recognition
 ```
-2. Run the following commands in Terminal 1 to build a virtual environment, install prerequisites, and create scripts:
+2. Run the following commands in Terminal 1 to build a virtual environment, install prerequisites, and generate scripts:
 ```
 source init.sh
 python run.py prepare
@@ -38,5 +38,5 @@ bash scripts/run_docker.sh
 ```
 In Terminal 1, run command:
 ```
-python run.py inference.py
+python inference.py
 ```

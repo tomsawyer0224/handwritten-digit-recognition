@@ -142,7 +142,7 @@ class Tuner:
         parent_run_id = self.parent_run.info.run_id
         objective = self.get_objective(parent_run_id)
         study = optuna.create_study(direction="maximize")
-        study.optimize(objective, **self.tuning_config)
+        study.optimize(objective,**self.tuning_config, show_progress_bar=True)
 
         # best model
         best_params = study.best_params
