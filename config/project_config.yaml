@@ -47,7 +47,7 @@ models:
   #       param_range: [80, 120]
   #     learning_rate:
   #       param_type: "float"
-  #       param_range: [0.08,0.15]
+  #       param_range: [0.08, 0.15]
   #     max_depth: 10
   #     objective: "multiclass"
   #     verbosity: -1
@@ -59,7 +59,7 @@ models:
   #   model_params:
   #     learning_rate:
   #       param_type: "float"
-  #       param_range: [0.08,0.15]
+  #       param_range: [0.08, 0.15]
   #     iterations: 10
   #     loss_function: "MultiClass"
   #     early_stopping_rounds: 2
