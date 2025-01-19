@@ -34,9 +34,14 @@ python run.py deploy
 ```
 7. To test the model the deployed model, open a new Terminal (Terminal 3) in the handwritten-digit-recognition directory and run command:
 ```
-bash scripts/run_docker.sh 
+bash scripts/start_docker_container.sh
 ```
 In Terminal 1, run command:
 ```
 python inference.py
 ```
+> [!Note]
+> To stop the tracking server, running this command in Terminal 1:
+> ```bash scripts/stop_tracking_server.sh```
+> To stop the container, running this command in Terminal 1:
+> ```bash scripts/stop_docker_container.sh```

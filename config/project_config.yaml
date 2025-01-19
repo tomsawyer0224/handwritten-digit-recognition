@@ -33,7 +33,7 @@ models:
         param_range: [80, 120]
       learning_rate:
         param_type: "float"
-        param_range: [0.08, 0.15]
+        param_range: [0.1, 0.3]
       early_stopping_rounds: 5
       verbosity: 0
       n_jobs: -1
