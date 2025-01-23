@@ -3,6 +3,8 @@ Build a model that can recognize the handwritten number.
 # About project
 - This project's goal was to demonstrate the entire machine learning process, including dataset preparation, training, fine-tuning, and model deployment.
 - Optuna is used to optimize the hyperparameters of scikit-learn, XGBoost, LightGBM, and Catboost models on the handwritten digit dataset. MLflow is used to track the training process and deploy the final model to Docker.
+> [!Note]
+> You can use another powerful library [PyCaret](https://pycaret.org/) instead.
 # Experiment
 # How to use
 0. First, you should install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html), [pyenv](https://github.com/pyenv/pyenv) and [Docker](https://docs.docker.com/engine/install/ubuntu/) on Ubuntu.

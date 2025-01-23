@@ -16,6 +16,6 @@ def load_dataset() -> Bunch:
         data_home="./data"
     )
     logger.info(
-        f"The MNIST Digit Dataset has been loaded with {len(raw_dataset["target"])} data points."
+        f"The MNIST Digit Dataset has been loaded with {len(raw_dataset["target"])} data points"
     )
     return raw_dataset
