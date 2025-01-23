@@ -44,6 +44,10 @@ python inference.py
 ```
 > [!Note]
 > To stop the tracking server, running this command in Terminal 1:
-> ```bash scripts/stop_tracking_server.sh```
+> ```
+> bash scripts/stop_tracking_server.sh
+> ```
 > To stop the container, running this command in Terminal 1:
-> ```bash scripts/stop_docker_container.sh```
+> ```
+> bash scripts/stop_docker_container.sh
+> ```
