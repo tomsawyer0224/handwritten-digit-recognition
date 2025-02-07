@@ -3,9 +3,16 @@ Build a model that can recognize the handwritten number.
 # About project
 - This project's goal was to demonstrate the entire machine learning process, including dataset preparation, training, fine-tuning, and model deployment.
 - Optuna is used to optimize the hyperparameters of scikit-learn, XGBoost, LightGBM, and Catboost models on the handwritten digit dataset. MLflow is used to track the training process and deploy the final model to Docker.
+# How it works
+- Models are adjusted over hyperparameter space, which is defined via a configuration file.
+- Every model is trained using the default set of parameters.
+- Compare all of the results and return the best model.
 > [!Note]
 > [PyCaret](https://pycaret.org/) is another great library that can be used.
 # Experiment
+- Number of models: 8.
+- Number of trials per model: 10.
+- The winner: LGBMClassifier with 98.37% accuracy on the validation set.
 # How to use
 0. First, you should install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html), [pyenv](https://github.com/pyenv/pyenv) and [Docker](https://docs.docker.com/engine/install/ubuntu/) on Ubuntu.
 1. Open a Terminal (Terminal 1) and clone this repository:
@@ -42,6 +49,7 @@ In Terminal 1, run command:
 ```
 python inference.py
 ```
+This script is used for testing purpose, follow the mlflow's instruction (on web browser) for inferrence.
 > [!Note]
 > To stop the tracking server, running this command in Terminal 1:
 > ```
