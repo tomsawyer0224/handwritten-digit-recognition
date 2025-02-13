@@ -1,13 +1,9 @@
-from sklearn.linear_model import (
-    RidgeClassifier,
-    LogisticRegression,
-    SGDClassifier
-)
+from sklearn.linear_model import RidgeClassifier, LogisticRegression, SGDClassifier
 from sklearn.ensemble import (
     AdaBoostClassifier,
     RandomForestClassifier,
     GradientBoostingClassifier,
-    HistGradientBoostingClassifier
+    HistGradientBoostingClassifier,
 )
 from sklearn.svm import SVC, NuSVC, LinearSVC
 from sklearn.naive_bayes import GaussianNB
@@ -20,10 +16,12 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 
-#import optuna
+# import optuna
 
 from typing import Dict, Any
-#from .training_utilities import get_default_config, prepare_model_config
+
+# from .training_utilities import get_default_config, prepare_model_config
+
 
 def create_model(model_config: Dict[str, Any]):
     """

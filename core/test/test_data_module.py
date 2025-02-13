@@ -1,5 +1,7 @@
 import sys
-if "." not in sys.path: sys.path.append(".")
+
+if "." not in sys.path:
+    sys.path.append(".")
 import numpy as np
 import pandas as pd
 import unittest
@@ -8,11 +10,12 @@ from core import Digit_Data_Module
 
 
 logging.basicConfig(
-        format="{asctime}::{levelname}::{name}::{message}",
-        style="{",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.INFO
-    )
+    format="{asctime}::{levelname}::{name}::{message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+)
+
 
 class Test_Data_Module(unittest.TestCase):
     def print_dataset_info(self, dataset):
@@ -28,14 +31,14 @@ class Test_Data_Module(unittest.TestCase):
         else:
             raise "data should be numpy array or pandas dataframe"
         print(f"data range: [{min_val}, {max_val}]")
-        print("+++"*10)
+        print("+++" * 10)
         print(f"target type: {type(target)}")
         target_array = np.array(target)
         print(f"target range: [{target_array.min()}, {target_array.max()}]")
 
     def test_methods(self):
         data_module = Digit_Data_Module()
-        print("---"*30)
+        print("---" * 30)
         print("***test_get_training_dataset***")
         train_dataset = data_module.train_dataset
         val_dataset = data_module.val_dataset
@@ -43,12 +46,14 @@ class Test_Data_Module(unittest.TestCase):
         self.print_dataset_info(train_dataset)
         print("\n>>> val_dataset:")
         self.print_dataset_info(val_dataset)
-        print("---"*30)
-    
+        print("---" * 30)
+
         print("***test_get_test_dataset***")
         test_dataset = data_module.test_dataset
         print("\n>>> test_dataset:")
         self.print_dataset_info(test_dataset)
-        print("---"*30)
-if __name__=="__main__":
+        print("---" * 30)
+
+
+if __name__ == "__main__":
     unittest.main()

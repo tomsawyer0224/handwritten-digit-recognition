@@ -2,6 +2,8 @@ from mlflow import MlflowClient
 import logging
 
 logger = logging.getLogger(__name__)
+
+
 def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
     """
     gets an existing experiment or creates a new experiment
@@ -15,17 +17,17 @@ def get_or_create_experiment(experiment_name: str, client: MlflowClient) -> str:
         return experiment.experiment_id
     else:
         return client.create_experiment(experiment_name)
+
+
 def generate_next_run_name(
-        client: MlflowClient,
-        experiment_id: str,
-        prefix: str = "version"
-    ) -> str:
+    client: MlflowClient, experiment_id: str, prefix: str = "version"
+) -> str:
     """
     generates a new run name
     """
     runs = client.search_runs(
         experiment_ids=[experiment_id],
-        filter_string=f"attributes.run_name LIKE '{prefix}%'"
+        filter_string=f"attributes.run_name LIKE '{prefix}%'",
     )
     run_names = [run.info.run_name for run in runs]
     if len(run_names) > 0:
