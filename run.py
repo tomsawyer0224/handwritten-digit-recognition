@@ -53,7 +53,7 @@ def prepare(config_file):
     with open("./scripts/start_docker_container.sh", "w") as rd_scr:
         # rd_scr.write("docker run -p 5001:8080 handwritten-digit-recognition-model")
         rd_scr.write(
-            "docker run --name recognition-container -p 5001:8080 handwritten-digit-recognition-model"
+            "docker run --rm --name recognition-container -p 5001:8080 handwritten-digit-recognition-model"
         )
     # script to stop docker container
     with open("./scripts/stop_docker_container.sh", "w") as sdc_scr:
