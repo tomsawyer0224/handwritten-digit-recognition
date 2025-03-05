@@ -1,5 +1,6 @@
 import mlflow
 import logging
+import mlflow.artifacts
 import yaml
 import os
 
@@ -29,3 +30,12 @@ class DeploymentPipeline:
             )
         except:
             print("Something went wrong with the model to be deployed!")
+
+    def build_webapp(self):
+        mlflow.artifacts.download_artifacts(
+            artifact_uri=self.model_uri,
+            dst_path="./webapp"
+        )
+
+deployment = DeploymentPipeline()
+deployment.build_webapp()
